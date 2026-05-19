@@ -1,0 +1,142 @@
+# Run Django Project Next Time
+
+## 1. Open VS Code
+
+Open project folder:
+
+```bash
+mine_qr_system
+```
+
+---
+
+## 2. Open Terminal
+
+Press:
+
+```text
+Ctrl + `
+```
+
+---
+
+## 3. Activate Virtual Environment
+
+```bash
+venv\Scripts\activate
+```
+
+You should see:
+
+```bash
+(venv)
+```
+
+---
+
+## 4. Start Django Server
+
+```bash
+python manage.py runserver
+```
+
+---
+
+## 5. Open Website
+
+Main Website:
+
+```text
+http://127.0.0.1:8000/
+```
+
+Admin Panel:
+
+```text
+http://127.0.0.1:8000/admin/
+```
+
+---
+
+## 6. Stop Server
+
+Press:
+
+```text
+Ctrl + C
+
+Your virtual environment is broken because it was copied/moved from:
+
+```text
+C:\Users\Sidharth\OneDrive\Documents\mine_qr_system
+```
+
+to:
+
+```text
+D:\Suman_GVPR\mine_qr_system
+```
+
+Old `.venv` paths are still stored internally.
+
+Fix it like this.
+
+# STEP 1 — DELETE OLD VENV
+
+Delete folder:
+
+```text
+.venv
+```
+
+inside:
+
+```text
+D:\Suman_GVPR\mine_qr_system
+```
+
+---
+
+# STEP 2 — CREATE NEW VENV
+
+Open terminal in project folder:
+
+```bash
+python -m venv .venv
+```
+
+---
+
+# STEP 3 — ACTIVATE VENV
+
+PowerShell:
+
+```bash
+.venv\Scripts\Activate.ps1
+```
+
+CMD:
+
+```bash
+.venv\Scripts\activate
+```
+
+---
+
+# STEP 4 — INSTALL REQUIREMENTS
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# STEP 5 — RUN PROJECT
+
+```bash
+python manage.py runserver
+```
+
+Now everything will work correctly with the new project location.
+
+```

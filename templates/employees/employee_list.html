@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Employee List</h2>
+
+<form method="GET" id="filterForm">
+
+    <label>Start Date:</label>
+    <input
+        type="date"
+        name="start_date"
+        value="{{ request.GET.start_date }}"
+        onchange="document.getElementById('filterForm').submit();"
+    >
+
+    <label>End Date:</label>
+    <input
+        type="date"
+        name="end_date"
+        value="{{ request.GET.end_date|default:today }}"
+        onchange="document.getElementById('filterForm').submit();"
+    >
+
+</form>
+
+<br>
+
+<a href="{% url 'export_excel' %}?start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date|default:today }}">
+
+    <button type="button">
+        Export Excel
+    </button>
+
+</a>
+
+<br><br>
+
+<table class="table table-bordered table-striped">
+
+    <tr>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Designation</th>
+        <th>Mobile</th>
+        <th>Joining Date</th>
+        <th>Documents</th>
+        <th>QR Code</th>
+    </tr>
+
+    {% for employee in employees %}
+
+    <tr>
+        <td>{{ employee.employee_id }}</td>
+        <td>{{ employee.name }}</td>
+        <td>{{ employee.department }}</td>
+        <td>{{ employee.designation }}</td>
+        <td>{{ employee.mobile }}</td>
+        <td>{{ employee.joining_date }}</td>
+        <td>
+
+    {% for doc in employee.documents.all %}
+
+        <a href="{{ doc.file.url }}" target="_blank">
+
+            View PDF
+
+        </a>
+
+        <br>
+
+    {% endfor %}
+
+</td>
+
+        <td>
+            <img src="{{ employee.qr_code.url }}" width="100">
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}
