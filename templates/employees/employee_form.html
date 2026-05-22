@@ -2,28 +2,498 @@
 
 {% block content %}
 
-<h2>Add Employee</h2>
+<div class="container-fluid">
 
-<form method="POST" enctype="multipart/form-data">
+    <form method="POST"
+          enctype="multipart/form-data"
+          action="{% if edit_mode %}{% url 'edit_employee' employee.id %}{% else %}{% url 'add_employee' %}{% endif %}">
 
-    {% csrf_token %}
+        {% csrf_token %}
 
-    {{ form.as_p }}
+        <!-- HEADER -->
 
-    <label>Upload  Documents:</label>
+        <div class="top-header">
 
-    <input
-        type="file"
-        name="documents"
-        multiple
-    >
+            <div>
 
-    <br><br>
+                {% if edit_mode %}
+                    <h2>EDIT EMPLOYEE</h2>
+                {% else %}
+                    <h2>FORM - A</h2>
+                    <h2>EMPLOYEE REGISTER FORM</h2>
+                {% endif %}
 
-    <button type="submit">
-        Save Employee
-    </button>
+                <h6>
+                    <b>NAME OF THE ESTABLISHMENT:</b>
+                    GVPR ENGINEERS LIMITED, Koira Iron Ore Mines,
+                    Sundargarh, Odisha - 770048
+                </h6>
 
-</form>
+                <h6>
+                    <b>NAME OF OWNER:</b>
+                    GVPR ENGINEERS LIMITED
+                </h6>
+
+                <h6>
+                    <b>LIN:</b>
+                    1-9558-5238-8
+                </h6>
+
+            </div>
+
+            <button type="submit" class="save-btn">
+
+                <i class="fa-solid fa-floppy-disk"></i>
+
+                {% if edit_mode %}
+                    UPDATE EMPLOYEE
+                {% else %}
+                    SAVE EMPLOYEE
+                {% endif %}
+
+            </button>
+
+        </div>
+
+        <!-- PART A -->
+
+        <div class="form-card">
+
+            <div class="part-title">
+                PART - A : FOR ALL ESTABLISHMENT
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6 form-group">
+                    <label>1. SERIAL NO.</label>
+                    {{ form.employee_register_no }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>2. EMPLOYEE CODE</label>
+                    {{ form.employee_id }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>3. NAME & SURNAME OF EMPLOYEE</label>
+                    {{ form.name }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>4. GENDER</label>
+                    {{ form.gender }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>5. FATHER / SPOUSE NAME</label>
+                    {{ form.father_spouse_name }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>6. DATE OF BIRTH</label>
+                    {{ form.dob }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>7. NATIONALITY</label>
+                    {{ form.nationality }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>8. EDUCATION LEVEL</label>
+                    {{ form.education_level }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>9. DATE OF JOINING</label>
+                    {{ form.joining_date }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>10. DESIGNATION</label>
+                    {{ form.designation }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>11. CATEGORY</label>
+                    {{ form.category }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>12. TYPE OF EMPLOYMENT</label>
+                    {{ form.employment_type }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>13. MOBILE</label>
+                    {{ form.mobile }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>14. UAN</label>
+                    {{ form.uan }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>15. PAN</label>
+                    {{ form.pan }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>16. ESIC IP</label>
+                    {{ form.esic_ip }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>17. LWF</label>
+                    {{ form.lwf }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>18. AADHAAR</label>
+                    {{ form.aadhaar }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>19. BANK ACCOUNT NO.</label>
+                    {{ form.bank_account_no }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>20. BANK NAME</label>
+                    {{ form.bank_name }}
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>21. IFSC</label>
+                    {{ form.ifsc }}
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>22. PRESENT ADDRESS</label>
+                    {{ form.present_address }}
+                </div>
+
+                <!-- SAME ADDRESS -->
+
+                <div class="col-md-12 mb-3">
+
+                    <div class="same-address">
+
+                        <input type="checkbox" id="sameAddress">
+
+                        <label for="sameAddress">
+                            PERMANENT ADDRESS SAME AS PRESENT ADDRESS
+                        </label>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>23. PERMANENT ADDRESS</label>
+                    {{ form.permanent_address }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>24. SERVICE BOOK NO.</label>
+                    {{ form.service_book_no }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>25. DATE OF EXIT</label>
+                    {{ form.exit_date }}
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>26. REASON FOR EXIT</label>
+                    {{ form.exit_reason }}
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>27. IDENTIFICATION MARK</label>
+                    {{ form.identification_mark }}
+                </div>
+
+                <!-- PHOTO -->
+
+                <div class="col-md-6 form-group">
+
+                    <label>28. EMPLOYEE PHOTO</label>
+
+                    {% if employee and employee.photo %}
+                        <div class="preview-box">
+                            <img src="{{ employee.photo.url }}">
+                        </div>
+                    {% endif %}
+
+                    {{ form.photo }}
+
+                </div>
+
+                <!-- SIGNATURE -->
+
+                <div class="col-md-6 form-group">
+
+                    <label>29. SIGNATURE</label>
+
+                    {% if employee and employee.signature %}
+                        <div class="preview-box">
+                            <img src="{{ employee.signature.url }}">
+                        </div>
+                    {% endif %}
+
+                    {{ form.signature }}
+
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>30. REMARKS</label>
+                    {{ form.remarks }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- PART B -->
+
+        <div class="form-card mt-4">
+
+            <div class="part-title">
+                PART - B : FOR THE MINES ACT, 1952
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6 form-group">
+                    <label>1. TOKEN NUMBER ISSUED</label>
+                    {{ form.token_number }}
+                </div>
+
+                <div class="col-md-6 form-group">
+
+                    <label>2. NAME</label>
+
+                    <input
+                        type="text"
+                        id="part_b_name"
+                        class="form-control"
+                        readonly
+                    >
+
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>3. DATE OF FIRST APPOINTMENT</label>
+                    {{ form.first_appointment_date }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>4. AGE / FITNESS CERTIFICATE</label>
+                    {{ form.age_fitness_certificate }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>5. PLACE OF EMPLOYMENT</label>
+                    {{ form.place_of_employment }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>6. VOCATIONAL TRAINING NUMBER</label>
+                    {{ form.vocational_training_number }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>7. VOCATIONAL TRAINING DATE</label>
+                    {{ form.vocational_training_date }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>8. NOMINEE NAME</label>
+                    {{ form.nominee_name }}
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>9. NOMINEE ADDRESS</label>
+                    {{ form.nominee_address }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>10. EMERGENCY CONTACT NAME</label>
+                    {{ form.emergency_contact_name }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>11. EMERGENCY MOBILE</label>
+                    {{ form.emergency_mobile }}
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>12. EMERGENCY CONTACT ADDRESS</label>
+                    {{ form.emergency_contact_address }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<style>
+
+body{
+    background:#f1f5f9;
+}
+
+.form-card{
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.06);
+    margin-bottom:25px;
+}
+
+.top-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.top-header h2{
+    font-weight:700;
+    margin-bottom:5px;
+    color:#0f172a;
+}
+
+.part-title{
+    background:#0f172a;
+    color:white;
+    padding:14px 18px;
+    border-radius:12px;
+    margin-bottom:25px;
+    font-weight:700;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+.form-group label{
+    font-weight:600;
+    margin-bottom:7px;
+    display:block;
+    color:#1e293b;
+    font-size:14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+    width:100%;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:12px;
+    background:#f8fafc;
+}
+
+.form-group textarea{
+    min-height:100px;
+}
+
+.save-btn{
+    border:none;
+    background:#2563eb;
+    color:white;
+    padding:12px 25px;
+    border-radius:12px;
+    font-weight:600;
+}
+
+.same-address{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#eff6ff;
+    padding:12px;
+    border-radius:10px;
+}
+
+.preview-box{
+    margin-bottom:10px;
+}
+
+.preview-box img{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:10px;
+    border:2px solid #cbd5e1;
+    background:white;
+    padding:4px;
+}
+
+@media(max-width:768px){
+
+    .top-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+}
+
+</style>
+
+<script>
+
+// SAME ADDRESS
+
+document.getElementById('sameAddress').addEventListener('change', function(){
+
+    if(this.checked){
+
+        document.getElementById('id_permanent_address').value =
+        document.getElementById('id_present_address').value;
+
+    } else {
+
+        document.getElementById('id_permanent_address').value = '';
+
+    }
+
+});
+
+
+// AUTO COPY NAME
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const partAName =
+        document.getElementById("id_name");
+
+    const partBName =
+        document.getElementById("part_b_name");
+
+    function updatePartBName() {
+
+        partBName.value = partAName.value;
+
+    }
+
+    partAName.addEventListener(
+        "input",
+        updatePartBName
+    );
+
+    updatePartBName();
+
+});
+
+</script>
 
 {% endblock %}

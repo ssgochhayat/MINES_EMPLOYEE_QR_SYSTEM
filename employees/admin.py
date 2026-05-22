@@ -53,7 +53,7 @@ class EmployeeDocumentAdmin(admin.ModelAdmin):
         'file',
         'uploaded_at'
     )
-admin.site.site_header = "GVPR Employee Admin"
+admin.site.site_header = "GVPR Employee Log In"
 
 admin.site.site_title = "GVPR Admin Portal"
 

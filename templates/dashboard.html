@@ -1,19 +1,516 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
 
-<div class="row">
+<div class="dashboard-page">
 
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body">
-                <h3>Total Employees</h3>
-                <h1>{{ total_employees }}</h1>
-            </div>
+    <!-- TOP HEADER -->
+
+    <div class="dashboard-header">
+
+        <div>
+            <h2>Dashboard</h2>
+            <p>Employee Management Overview</p>
         </div>
+
+        <div class="header-actions">
+
+            <button class="notify-btn">
+                <i class="fa-solid fa-bell"></i>
+            </button>
+
+            <a href="/employees/add/" class="add-employee-btn">
+
+                <i class="fa-solid fa-user-plus"></i>
+                Add Employee
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- STATS -->
+
+    <div class="stats-grid">
+
+        <!-- CARD -->
+
+        <div class="stat-card">
+
+            <div class="stat-left">
+
+                <p>Total Employees</p>
+
+                <h3>{{ employees.count }}</h3>
+
+            </div>
+
+            <div class="stat-icon blue">
+                <i class="fa-solid fa-users"></i>
+            </div>
+
+        </div>
+
+        <!-- CARD -->
+
+        <div class="stat-card">
+
+            <div class="stat-left">
+
+                <p>Departments</p>
+
+                <h3>{{ departments_count }}</h3>
+
+            </div>
+
+            <div class="stat-icon green">
+                <i class="fa-solid fa-building"></i>
+            </div>
+
+        </div>
+
+        <!-- CARD -->
+
+        <div class="stat-card">
+
+            <div class="stat-left">
+
+                <p>Total Documents</p>
+
+                <h3>{{ documents_count }}</h3>
+
+            </div>
+
+            <div class="stat-icon orange">
+                <i class="fa-solid fa-file-pdf"></i>
+            </div>
+
+        </div>
+
+        <!-- CARD -->
+
+        <div class="stat-card">
+
+            <div class="stat-left">
+
+                <p>QR Generated</p>
+
+                <h3>{{ employees.count }}</h3>
+
+            </div>
+
+            <div class="stat-icon purple">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN SECTION -->
+
+    <div class="dashboard-grid">
+
+        <!-- RECENT EMPLOYEES -->
+
+        <div class="dashboard-card">
+
+            <div class="card-header">
+
+                <h4>Recent Employees</h4>
+
+                <a href="/employees/">
+                    View All
+                </a>
+
+            </div>
+
+            <div class="employee-list">
+
+                {% for employee in employees|slice:":5" %}
+
+                <div class="employee-item">
+
+                    <div class="employee-profile">
+
+                        <div class="employee-avatar">
+                            {{ employee.name|slice:":1" }}
+                        </div>
+
+                        <div>
+
+                            <div class="employee-name">
+                                {{ employee.name }}
+                            </div>
+
+                            <div class="employee-role">
+                                {{ employee.designation }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="employee-department">
+                        {{ employee.department }}
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="dashboard-card">
+
+            <div class="card-header">
+                <h4>Quick Actions</h4>
+            </div>
+
+            <div class="quick-actions">
+
+                <a href="/employees/add/" class="quick-btn">
+
+                    <div class="quick-icon blue">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+
+                    <div>
+                        <h5>Add Employee</h5>
+                        <p>Create new employee profile</p>
+                    </div>
+
+                </a>
+
+                <a href="/employees/" class="quick-btn">
+
+                    <div class="quick-icon green">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div>
+                        <h5>Employee List</h5>
+                        <p>Manage employee records</p>
+                    </div>
+
+                </a>
+
+                <a href="#" class="quick-btn">
+
+                    <div class="quick-icon orange">
+                        <i class="fa-solid fa-file-export"></i>
+                    </div>
+
+                    <div>
+                        <h5>Export Data</h5>
+                        <p>Download Excel report</p>
+                    </div>
+
+                </a>
+
+                <a href="#" class="quick-btn">
+
+                    <div class="quick-icon purple">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+
+                    <div>
+                        <h5>QR Scanner</h5>
+                        <p>Scan employee QR code</p>
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
+
+<style>
+
+/* PAGE */
+
+.dashboard-page{
+    padding:10px;
+}
+
+/* HEADER */
+
+.dashboard-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.dashboard-header h2{
+    font-size:30px;
+    font-weight:700;
+    margin-bottom:4px;
+    color:#0f172a;
+}
+
+.dashboard-header p{
+    color:#64748b;
+    margin:0;
+}
+
+/* ACTIONS */
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.notify-btn{
+    width:42px;
+    height:42px;
+    border:none;
+    border-radius:12px;
+    background:white;
+    box-shadow:0 2px 8px rgba(15,23,42,0.05);
+    color:#0f172a;
+}
+
+.add-employee-btn{
+    background:#0f172a;
+    color:white;
+    padding:11px 18px;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:600;
+    font-size:14px;
+}
+
+/* STATS */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:22px;
+}
+
+.stat-card{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 10px rgba(15,23,42,0.06);
+}
+
+.stat-left p{
+    margin:0;
+    color:#64748b;
+    font-size:14px;
+}
+
+.stat-left h3{
+    margin-top:8px;
+    font-size:28px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+/* ICON */
+
+.stat-icon{
+    width:55px;
+    height:55px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:20px;
+}
+
+.blue{
+    background:#2563eb;
+}
+
+.green{
+    background:#16a34a;
+}
+
+.orange{
+    background:#ea580c;
+}
+
+.purple{
+    background:#7c3aed;
+}
+
+/* GRID */
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+}
+
+/* CARD */
+
+.dashboard-card{
+    background:white;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 2px 10px rgba(15,23,42,0.06);
+}
+
+/* CARD HEADER */
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.card-header h4{
+    margin:0;
+    font-size:18px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.card-header a{
+    text-decoration:none;
+    color:#2563eb;
+    font-size:14px;
+    font-weight:600;
+}
+
+/* EMPLOYEE */
+
+.employee-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid #f1f5f9;
+}
+
+.employee-profile{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.employee-avatar{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:#0f172a;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:600;
+}
+
+.employee-name{
+    font-weight:600;
+    color:#0f172a;
+}
+
+.employee-role{
+    color:#64748b;
+    font-size:13px;
+}
+
+.employee-department{
+    font-size:13px;
+    background:#f1f5f9;
+    padding:6px 10px;
+    border-radius:8px;
+}
+
+/* QUICK ACTIONS */
+
+.quick-actions{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.quick-btn{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    text-decoration:none;
+    padding:16px;
+    border-radius:14px;
+    background:#f8fafc;
+    transition:0.3s;
+}
+
+.quick-btn:hover{
+    background:#f1f5f9;
+}
+
+.quick-icon{
+    width:48px;
+    height:48px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+}
+
+.quick-btn h5{
+    margin:0;
+    color:#0f172a;
+    font-size:15px;
+    font-weight:600;
+}
+
+.quick-btn p{
+    margin:2px 0 0;
+    color:#64748b;
+    font-size:13px;
+}
+
+/* MOBILE */
+
+@media(max-width:992px){
+
+    .stats-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .dashboard-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+
+    .dashboard-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+}
+
+</style>
 
 {% endblock %}

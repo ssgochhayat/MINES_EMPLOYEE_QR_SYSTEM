@@ -1,27 +1,452 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Mine QR System</title>
+<html lang="en">
 
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/media/Company logo/logo.png" />
+
+    <title>GVPR Mine QR System</title>
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
 </head>
+
 <body>
 
-<nav class="navbar navbar-dark bg-dark p-3">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">Mine QR System</a>
+    <!-- SIDEBAR -->
 
-        <div>
-            <a href="/employees/" class="btn btn-light">Employees</a>
-            <a href="/employees/add/" class="btn btn-success">Add Employee</a>
+    <div class="sidebar">
+
+        <div class="logo-section">
+
+           <div class="logo-icon"
+                style="background:#ffffff;
+                padding:6px;
+                border-radius:12px;">
+                <img src="/media/Company logo/logo.png"
+                    alt="Company Logo"
+                    style="width:42px;
+                    height:auto;
+                    object-fit:contain;">
+
+            </div>
+
+            <div>
+                <h4>GVPR</h4>
+                <p>Employee Management System</p>
+            </div>
+
         </div>
-    </div>
-</nav>
 
-<div class="container mt-4">
-    {% block content %}
-    {% endblock %}
-</div>
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="/">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="/employees/">
+                    <i class="fa-solid fa-users"></i>
+                    Employees
+                </a>
+            </li>
+
+            <li>
+                <a href="/employees/add/">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Add Employee
+                </a>
+            </li>
+
+            <li>
+                <a href="/upload-excel/">
+                    <i class="fa-solid fa-file-excel"></i>
+                    Upload Excel
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-qrcode"></i>
+                    QR Scanner
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    Reports
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-gear"></i>
+                    Settings
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+
+        <div class="topbar">
+
+            <div>
+
+                <h3 class="page-title">
+                    GVPR Employee Management System
+                </h3>
+
+                <p class="page-subtitle">
+                    Welcome to GVPR Mine Employee Management System
+                </p>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <!-- SEARCH -->
+
+                <form method="GET" action="/employees/">
+
+                    <div class="search-box">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input
+                            type="text"
+                            name="search"
+                            placeholder="Search employee..."
+                        >
+
+                    </div>
+
+                </form>
+
+                <!-- NOTIFICATION -->
+
+                <button class="notification-btn">
+                    <i class="fa-solid fa-bell"></i>
+                </button>
+
+                <!-- ADMIN PROFILE -->
+
+                <div class="admin-profile">
+
+                    <div class="admin-avatar">
+
+                        {{ request.user.username|slice:":1"|upper }}
+
+                    </div>
+
+                    <div>
+
+                        <h6>
+                             {% if request.user.first_name %}
+                                {{ request.user.first_name }}
+                            {% else %}
+                                {{ request.user.username }}
+                            {% endif %}
+                        </h6>
+
+                        
+
+                    </div>
+
+                    <a href="/logout/" class="logout-btn">
+
+                        <i class="fa-solid fa-right-from-bracket"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CONTENT -->
+
+        <div class="page-content">
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+
+    </div>
 
 </body>
+
 </html>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    overflow-x:hidden;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:270px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    background:linear-gradient(180deg,#0f172a,#1e293b);
+    padding:25px 18px;
+    color:white;
+    overflow-y:auto;
+}
+
+.logo-section{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:45px;
+}
+
+.logo-icon{
+    width:55px;
+    height:55px;
+    background:#2563eb;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+}
+
+.logo-section h4{
+    margin:0;
+    font-weight:700;
+}
+
+.logo-section p{
+    margin:0;
+    color:#cbd5e1;
+    font-size:13px;
+}
+
+.sidebar-menu{
+    list-style:none;
+    padding:0;
+}
+
+.sidebar-menu li{
+    margin-bottom:12px;
+}
+
+.sidebar-menu a{
+    text-decoration:none;
+    color:#cbd5e1;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:15px 18px;
+    border-radius:14px;
+    transition:0.3s;
+    font-weight:500;
+    font-size:15px;
+}
+
+.sidebar-menu a:hover{
+    background:#2563eb;
+    color:white;
+    transform:translateX(5px);
+}
+
+.sidebar-menu i{
+    font-size:18px;
+}
+
+/* MAIN */
+
+.main-content{
+    margin-left:270px;
+    padding:25px;
+}
+
+/* TOPBAR */
+
+.topbar{
+    background:white;
+    border-radius:24px;
+    padding:22px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 4px 20px rgba(15,23,42,0.05);
+    margin-bottom:25px;
+}
+
+.page-title{
+    font-size:26px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.page-subtitle{
+    margin-top:5px;
+    color:#64748b;
+    font-size:14px;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+/* SEARCH */
+
+.search-box{
+    background:#f8fafc;
+    border-radius:14px;
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:300px;
+}
+
+.search-box input{
+    border:none;
+    background:none;
+    outline:none;
+    width:100%;
+    font-size:14px;
+}
+
+/* NOTIFICATION */
+
+.notification-btn{
+    width:46px;
+    height:46px;
+    border:none;
+    border-radius:14px;
+    background:#f8fafc;
+    font-size:18px;
+}
+
+/* PROFILE */
+
+.admin-profile{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.admin-avatar{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    background:#2563eb;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+}
+
+.admin-profile h6{
+    margin:0;
+    font-weight:600;
+}
+
+.admin-profile p{
+    margin:0;
+    font-size:12px;
+    color:#64748b;
+}
+
+/* LOGOUT BUTTON */
+
+.logout-btn{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:#ef4444;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    transition:0.3s;
+    margin-left:10px;
+}
+
+.logout-btn:hover{
+    background:#dc2626;
+    transform:scale(1.05);
+    color:white;
+}
+
+/* PAGE */
+
+.page-content{
+    padding-bottom:30px;
+}
+
+/* MOBILE */
+
+@media(max-width:992px){
+
+    .sidebar{
+        width:100%;
+        height:auto;
+        position:relative;
+    }
+
+    .main-content{
+        margin-left:0;
+    }
+
+    .topbar{
+        flex-direction:column;
+        gap:20px;
+        align-items:flex-start;
+    }
+
+    .topbar-right{
+        width:100%;
+        flex-wrap:wrap;
+    }
+
+    .search-box{
+        width:100%;
+    }
+
+}
+
+</style>

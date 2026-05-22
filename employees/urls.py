@@ -13,6 +13,9 @@ urlpatterns = [
     path('employee/<str:employee_id>/', api_views.employee_detail_api),
     path('api/employees/', employee_api, name='employee_api'),
     path('api/employees/', employee_api),
-path('api/employee/<str:employee_id>/', employee_detail_api),
+    path('api/employee/<str:employee_id>/', employee_detail_api),
+    path("upload-excel/", upload_employee_excel),
+    path('employee/<int:id>/',views.employee_detail, name='employee_detail'),
+    path('employees/edit/<int:id>/',views.edit_employee,name='edit_employee'),
 ]
                     

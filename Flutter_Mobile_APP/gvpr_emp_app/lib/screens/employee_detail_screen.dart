@@ -101,22 +101,10 @@ class EmployeeDetailScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  detailRow(
-                    "Employee ID",
-                    employee['employee_id'] ?? '',
-                  ),
-                  detailRow(
-                    "Department",
-                    employee['department'] ?? '',
-                  ),
-                  detailRow(
-                    "Mobile",
-                    employee['mobile'] ?? '',
-                  ),
-                  detailRow(
-                    "Joining Date",
-                    employee['joining_date'] ?? '',
-                  ),
+                  detailRow("Employee ID", employee['employee_id'] ?? ''),
+                  detailRow("Department", employee['department'] ?? ''),
+                  detailRow("Mobile", employee['mobile'] ?? ''),
+                  detailRow("Joining Date", employee['joining_date'] ?? ''),
                 ],
               ),
             ),
@@ -174,6 +162,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                             ),
                             child: Column(
                               children: [
+                                /// DOCUMENT INFO
                                 Row(
                                   children: [
                                     Container(
@@ -203,7 +192,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 5),
                                           Text(
-                                            "Employee PDF Document",
+                                            "Employee Document",
                                             style: TextStyle(
                                               color: Colors.grey.shade700,
                                             ),
@@ -216,50 +205,9 @@ class EmployeeDetailScreen extends StatelessWidget {
 
                                 const SizedBox(height: 15),
 
-                                /// BUTTONS
+                                /// ONLY DOWNLOAD BUTTON
                                 Row(
                                   children: [
-                                    /// VIEW BUTTON
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 14,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => PdfViewScreen(
-                                                url: doc['file'],
-                                                title: doc['document_name'],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        icon: const Icon(
-                                          Icons.visibility,
-                                          color: Colors.white,
-                                        ),
-                                        label: const Text(
-                                          "View",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    const SizedBox(width: 12),
-
-                                    /// DOWNLOAD BUTTON
                                     Expanded(
                                       child: ElevatedButton.icon(
                                         style: ElevatedButton.styleFrom(
@@ -289,7 +237,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                                           color: Colors.white,
                                         ),
                                         label: const Text(
-                                          "Download",
+                                          "View Document",
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -316,9 +264,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                       child: const Center(
                         child: Text(
                           "No Documents Uploaded",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(fontSize: 16),
                         ),
                       ),
                     ),
@@ -355,105 +301,6 @@ class EmployeeDetailScreen extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class PdfViewScreen extends StatelessWidget {
-  final String url;
-  final String title;
-
-  const PdfViewScreen({
-    super.key,
-    required this.url,
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final pdfUrl = url.replaceAll(
-      "127.0.0.1",
-      "localhost",
-    );
-
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.download),
-            onPressed: () async {
-              await launchUrl(
-                Uri.parse(pdfUrl),
-                mode: LaunchMode.externalApplication,
-              );
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(15),
-            margin: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Row(
-              children: const [
-                Icon(
-                  Icons.picture_as_pdf,
-                  color: Colors.white,
-                  size: 40,
-                ),
-                SizedBox(width: 15),
-                Expanded(
-                  child: Text(
-                    "PDF Document Viewer",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: SfPdfViewer.network(
-                  pdfUrl,
-                  canShowPaginationDialog: true,
-                  enableDoubleTapZooming: true,
-                  enableTextSelection: true,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 15),
         ],
       ),
     );

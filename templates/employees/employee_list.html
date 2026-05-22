@@ -2,85 +2,450 @@
 
 {% block content %}
 
-<h2>Employee List</h2>
+<div class="employee-page">
 
-<form method="GET" id="filterForm">
+    <!-- HEADER -->
 
-    <label>Start Date:</label>
-    <input
-        type="date"
-        name="start_date"
-        value="{{ request.GET.start_date }}"
-        onchange="document.getElementById('filterForm').submit();"
-    >
+    <div class="top-section">
 
-    <label>End Date:</label>
-    <input
-        type="date"
-        name="end_date"
-        value="{{ request.GET.end_date|default:today }}"
-        onchange="document.getElementById('filterForm').submit();"
-    >
+        <div>
+            <h2>Employee List</h2>
+            <p>Manage all employee records</p>
+        </div>
 
-</form>
+        <div class="top-actions">
 
-<br>
+            <a href="/employees/add/" class="add-btn">
+                <i class="fa-solid fa-user-plus"></i>
+                Add Employee
+            </a>
 
-<a href="{% url 'export_excel' %}?start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date|default:today }}">
+            <a href="{% url 'export_excel' %}?start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date|default:today }}"
+               class="export-btn">
 
-    <button type="button">
-        Export Excel
-    </button>
+                <i class="fa-solid fa-file-excel"></i>
+                Export
 
-</a>
+            </a>
 
-<br><br>
+        </div>
 
-<table class="table table-bordered table-striped">
+    </div>
 
-    <tr>
-        <th>Employee ID</th>
-        <th>Name</th>
-        <th>Department</th>
-        <th>Designation</th>
-        <th>Mobile</th>
-        <th>Joining Date</th>
-        <th>Documents</th>
-        <th>QR Code</th>
-    </tr>
+    <!-- FILTER -->
 
-    {% for employee in employees %}
+    <div class="filter-card">
 
-    <tr>
-        <td>{{ employee.employee_id }}</td>
-        <td>{{ employee.name }}</td>
-        <td>{{ employee.department }}</td>
-        <td>{{ employee.designation }}</td>
-        <td>{{ employee.mobile }}</td>
-        <td>{{ employee.joining_date }}</td>
-        <td>
+        <form method="GET" id="filterForm">
 
-    {% for doc in employee.documents.all %}
+            <div class="filter-group">
 
-        <a href="{{ doc.file.url }}" target="_blank">
+                <div class="filter-input">
 
-            View PDF
+                    <label>Start Date</label>
 
-        </a>
+                    <input
+                        type="date"
+                        name="start_date"
+                        value="{{ request.GET.start_date }}"
+                        onchange="document.getElementById('filterForm').submit();"
+                    >
 
-        <br>
+                </div>
 
-    {% endfor %}
+                <div class="filter-input">
 
-</td>
+                    <label>End Date</label>
 
-        <td>
-            <img src="{{ employee.qr_code.url }}" width="100">
-        </td>
-    </tr>
+                    <input
+                        type="date"
+                        name="end_date"
+                        value="{{ request.GET.end_date|default:today }}"
+                        onchange="document.getElementById('filterForm').submit();"
+                    >
 
-    {% endfor %}
+                </div>
 
-</table>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="table-card">
+
+        <div class="table-responsive">
+
+            <table class="employee-table">
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Mobile</th>
+                        <th>Joining</th>
+                        <th>Documents</th>
+                        <th>QR</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for employee in employees %}
+
+                    <tr>
+
+                        <td>
+                            <span class="emp-id">
+                                {{ employee.employee_id }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <div class="employee-info">
+
+                                {% if employee.photo %}
+                                    <img src="{{ employee.photo.url }}"
+                                         class="employee-photo">
+                                {% else %}
+                                    <div class="employee-avatar">
+                                        {{ employee.name|slice:":1" }}
+                                    </div>
+                                {% endif %}
+
+                                <div>
+
+                                    <div class="employee-name">
+                                        {{ employee.name }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <td>{{ employee.department }}</td>
+
+                        <td>{{ employee.designation }}</td>
+
+                        <td>{{ employee.mobile }}</td>
+
+                        <td>{{ employee.joining_date }}</td>
+
+                        <td>
+
+                            {% for doc in employee.documents.all %}
+
+                                <a href="{{ doc.file.url }}"
+                                   target="_blank"
+                                   class="pdf-btn">
+
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    PDF
+
+                                </a>
+
+                            {% empty %}
+
+                                <span class="no-doc">
+                                    No File
+                                </span>
+
+                            {% endfor %}
+
+                        </td>
+
+                        <td>
+
+                            {% if employee.qr_code %}
+                                <img src="{{ employee.qr_code.url }}"
+                                     class="qr-image">
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a href="/employees/{{ employee.id }}/"
+                                class="view-btn">
+
+                                    <i class="fa-solid fa-eye"></i>
+                                    View
+
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+/* PAGE */
+
+.employee-page{
+    padding:10px;
+}
+
+/* TOP */
+
+.top-section{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.top-section h2{
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:3px;
+    color:#0f172a;
+}
+
+.top-section p{
+    color:#64748b;
+    margin:0;
+}
+
+/* ACTIONS */
+
+.top-actions{
+    display:flex;
+    gap:12px;
+}
+
+.add-btn,
+.export-btn{
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:10px;
+    font-weight:600;
+    font-size:14px;
+    transition:0.3s;
+}
+
+.add-btn{
+    background:#0f172a;
+    color:white;
+}
+
+.export-btn{
+    background:white;
+    color:#0f172a;
+    border:1px solid #cbd5e1;
+}
+
+.add-btn:hover,
+.export-btn:hover{
+    transform:translateY(-2px);
+}
+
+/* FILTER */
+
+.filter-card{
+    background:white;
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(15,23,42,0.05);
+}
+
+.filter-group{
+    display:flex;
+    gap:18px;
+}
+
+.filter-input{
+    display:flex;
+    flex-direction:column;
+}
+
+.filter-input label{
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:6px;
+    color:#475569;
+}
+
+.filter-input input{
+    border:1px solid #cbd5e1;
+    background:#f8fafc;
+    border-radius:10px;
+    padding:10px 14px;
+    min-width:200px;
+    outline:none;
+}
+
+/* TABLE CARD */
+
+.table-card{
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(15,23,42,0.06);
+}
+
+/* TABLE */
+
+.employee-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.employee-table thead{
+    background:#0f172a;
+}
+
+.employee-table thead th{
+    color:white;
+    font-weight:600;
+    padding:16px;
+    font-size:14px;
+}
+
+.employee-table tbody td{
+    padding:14px 16px;
+    border-bottom:1px solid #e2e8f0;
+    font-size:14px;
+    color:#334155;
+}
+
+.employee-table tbody tr:hover{
+    background:#f8fafc;
+}
+
+/* EMPLOYEE */
+
+.employee-info{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.employee-avatar{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:#0f172a;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:600;
+}
+
+.employee-photo{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    object-fit:cover;
+    border:2px solid #e2e8f0;
+}
+
+.employee-name{
+    font-weight:600;
+    color:#0f172a;
+}
+
+/* ID */
+
+.emp-id{
+    background:#eff6ff;
+    color:#1d4ed8;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+}
+
+/* PDF */
+
+.pdf-btn{
+    text-decoration:none;
+    background:#fef2f2;
+    color:#dc2626;
+    padding:7px 12px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:5px;
+}
+
+.no-doc{
+    color:#94a3b8;
+    font-size:13px;
+}
+
+/* QR */
+
+.qr-image{
+    width:70px;
+    border-radius:8px;
+    border:1px solid #e2e8f0;
+    padding:4px;
+    background:white;
+}
+
+/* VIEW BUTTON */
+
+.view-btn{
+    background:#2563eb;
+    color:white;
+    text-decoration:none;
+    padding:9px 14px;
+    border-radius:10px;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    font-size:13px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.view-btn:hover{
+    background:#1d4ed8;
+    color:white;
+}
+
+/* MOBILE */
+
+@media(max-width:992px){
+
+    .top-section{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+    .filter-group{
+        flex-direction:column;
+    }
+
+}
+
+</style>
 
 {% endblock %}
