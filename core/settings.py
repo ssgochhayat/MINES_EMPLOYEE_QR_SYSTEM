@@ -9,6 +9,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*','10.36.83.65', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
+    "jazzmin",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -31,6 +32,60 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+JAZZMIN_SETTINGS = {
+
+    "site_title": "GVPR Admin",
+
+    "site_header": "GVPR Employee System",
+
+    "site_brand": "GVPR",
+    
+    "site_logo": "img/gvpr-logo.png",
+
+    "login_logo": "img/gvpr-logo.png",
+
+    "site_logo_classes": "img-fluid gvpr-admin-logo" ,
+
+    "welcome_sign": "Welcome To GVPR Employee Management",
+
+    "copyright": "GVPR Engineers Ltd",
+
+    "search_model": "employees.Employee",
+
+    "topmenu_links": [
+
+        {"name": "Admin Dashboard", "url": "admin:index"},
+        {"name": "Main Website", "url": "dashboard", "new_window": False},
+        {"name": "Reports", "url": "reports", "permissions": ["employees.export_employee_excel"]},
+
+    ],
+
+    "icons": {
+
+        "employees.Employee": "fas fa-users",
+        "employees.EmployeeDocument": "fas fa-file",
+
+    },
+
+    "show_sidebar": True,
+
+    "navigation_expanded": True,
+
+    "hide_apps": [],
+
+    "hide_models": [],
+
+    "order_with_respect_to": [
+
+        "employees",
+
+    ],
+
+    "custom_css": "css/gvpr-admin.css",
+
+    "custom_js": None,
+
+}
 
 ROOT_URLCONF = 'core.urls'
 
@@ -44,6 +99,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'employees.context_processors.employee_notifications',
             ],
         },
     },
@@ -72,7 +128,13 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static'

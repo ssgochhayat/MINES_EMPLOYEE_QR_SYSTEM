@@ -15,11 +15,14 @@
 
         <div class="top-actions">
 
+            {% if perms.employees.add_employee %}
             <a href="/employees/add/" class="add-btn">
                 <i class="fa-solid fa-user-plus"></i>
                 Add Employee
             </a>
+            {% endif %}
 
+            {% if perms.employees.export_employee_excel %}
             <a href="{% url 'export_excel' %}?start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date|default:today }}"
                class="export-btn">
 
@@ -27,6 +30,7 @@
                 Export
 
             </a>
+            {% endif %}
 
         </div>
 

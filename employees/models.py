@@ -1,8 +1,8 @@
+
 from django.db import models
 import qrcode
 
 from io import BytesIO
-
 from django.core.files import File
 
 
@@ -15,10 +15,10 @@ class Employee(models.Model):
     ]
 
     CATEGORY_CHOICES = [
-        ('HS', 'Highly Skilled'),
-        ('S', 'Skilled'),
-        ('SS', 'Semi Skilled'),
-        ('US', 'Un Skilled'),
+        ('Highly Skilled', 'Highly Skilled'),
+        ('Skilled', 'Skilled'),
+        ('Semi Skilled', 'Semi Skilled'),
+        ('Un Skilled', 'Un Skilled'),
     ]
 
     PLACE_CHOICES = [
@@ -34,11 +34,7 @@ class Employee(models.Model):
         unique=True
     )
 
-    employee_register_no = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
+    
 
     name = models.CharField(max_length=100)
 
@@ -77,7 +73,7 @@ class Employee(models.Model):
     designation = models.CharField(max_length=100)
 
     category = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=CATEGORY_CHOICES,
         blank=True,
         null=True
@@ -106,6 +102,39 @@ class Employee(models.Model):
         blank=True,
         null=True
     )
+    place_of_birth = models.CharField(
+    max_length=200,
+    blank=True,
+    null=True
+)
+
+    eps_nps = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    family_details = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    posting_details = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    pay = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    promotion = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True
+    )
 
     esic_ip = models.CharField(
         max_length=100,
@@ -113,11 +142,7 @@ class Employee(models.Model):
         null=True
     )
 
-    lwf = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
+   
 
     aadhaar = models.CharField(
         max_length=100,
@@ -225,48 +250,6 @@ class Employee(models.Model):
         null=True
     )
 
-    # PART-B MINES DETAILS
-
-    owner_name = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True
-    )
-
-    token_number = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
-
-    first_appointment_date = models.DateField(
-        blank=True,
-        null=True
-    )
-
-    age_fitness_certificate = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
-
-    place_of_employment = models.CharField(
-        max_length=50,
-        choices=PLACE_CHOICES,
-        blank=True,
-        null=True
-    )
-
-    vocational_training_number = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
-
-    vocational_training_date = models.DateField(
-        blank=True,
-        null=True
-    )
 
     nominee_name = models.CharField(
         max_length=200,
@@ -274,37 +257,23 @@ class Employee(models.Model):
         null=True
     )
 
-    nominee_address = models.TextField(
-        blank=True,
-        null=True
-    )
 
-    emergency_contact_name = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True
-    )
+   
 
-    emergency_contact_address = models.TextField(
-        blank=True,
-        null=True
-    )
-
-    emergency_mobile = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True
-    )
+    # SAVE METHOD
 
     def save(self, *args, **kwargs):
 
-        qr_data = f"""
-Employee ID: {self.employee_id}
-Name: {self.name}
-Department: {self.department}
-Designation: {self.designation}
-Mobile: {self.mobile}
-"""
+        super().save(*args, **kwargs)
+
+        # QR URL
+
+        qr_data = f"http://10.36.83.65:8000/employee-pdf/{self.id}/"
+
+        # FOR LIVE SERVER:
+        # qr_data = f"https://yourdomain.com/employees/{self.id}/"
+
+        # GENERATE QR
 
         qr_img = qrcode.make(qr_data)
 
@@ -314,16 +283,28 @@ Mobile: {self.mobile}
 
         file_name = f'{self.employee_id}.png'
 
+        # SAVE QR IMAGE
+
         self.qr_code.save(
             file_name,
             File(buffer),
             save=False
         )
 
-        super().save(*args, **kwargs)
+        super().save(update_fields=['qr_code'])
+
+    # STRING METHOD
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        permissions = (
+            ('view_dashboard', 'Can view dashboard'),
+            ('import_employee_excel', 'Can upload employee Excel'),
+            ('export_employee_excel', 'Can export employee Excel'),
+            ('scan_employee_qr', 'Can use employee QR scanner'),
+        )
 
 
 class EmployeeDocument(models.Model):
@@ -348,3 +329,4 @@ class EmployeeDocument(models.Model):
 
     def __str__(self):
         return self.document_name
+

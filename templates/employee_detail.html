@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% load static %}
+
 <div class="details-page">
 
     <!-- TOP BAR -->
@@ -15,10 +17,12 @@
 
         <div class="top-actions">
 
+            {% if perms.employees.view_employee %}
             <a href="/employees/" class="back-btn">
                 <i class="fa-solid fa-arrow-left"></i>
                 Back
             </a>
+            {% endif %}
 
             <button onclick="window.print()" class="print-btn">
                 <i class="fa-solid fa-print"></i>
@@ -31,13 +35,13 @@
 
     <!-- PAGE 1 -->
 
-    <div class="a4-sheet page-break">
+    <div class="a4-sheet">
 
         <!-- HEADER -->
 
         <div class="company-header">
 
-            <h2>FORM - A</h2>
+            <h2>FORM - XIII</h2>
 
             <h3>EMPLOYEE REGISTER FORM</h3>
 
@@ -48,22 +52,25 @@
             </p>
 
             <p>
-                <b>NAME OF OWNER :</b>
+                <b>NAME OF EMPLOYER/OWNER :</b>
                 GVPR ENGINEERS LIMITED
+            </p>
+             <p>
+                <b>PAN/TAN OF THE EMPLOYER:</b>
+            
             </p>
 
             <p>
-                <b>LIN :</b>
+                <b>LABOUR IDENTIFICATION NUMBER(LIN) :</b>
                 1-9558-5238-8
             </p>
+            
+             <hr style="border:1px solid #000205; ">
 
         </div>
 
         <!-- PART A -->
 
-        <div class="section-title">
-            PART - A : FOR ALL ESTABLISHMENT
-        </div>
 
         <!-- PHOTO -->
 
@@ -108,27 +115,33 @@
         <table class="details-table">
 
             <tr>
-                <td><b>1. SERIAL NO.</b></td>
-                <td>{{ employee.employee_register_no }}</td>
-
-                <td><b>2. EMPLOYEE CODE</b></td>
+                <td><b>1. EMPLOYEE CODE</b></td>
                 <td>{{ employee.employee_id }}</td>
-            </tr>
 
-            <tr>
                 <td><b>3. NAME & SURNAME</b></td>
                 <td>{{ employee.name }}</td>
-
-                <td><b>4. GENDER</b></td>
-                <td>{{ employee.gender }}</td>
             </tr>
 
             <tr>
-                <td><b>5. FATHER / SPOUSE NAME</b></td>
+               
+
+                <td><b>3. GENDER</b></td>
+                <td>{{ employee.gender }}</td>
+
+                <td><b>4. FATHER’s/MOTHER’s/SPOUSE’s Name</b></td>
                 <td>{{ employee.father_spouse_name }}</td>
 
-                <td><b>6. DATE OF BIRTH</b></td>
+
+            </tr>
+
+            <tr>
+                
+
+                <td><b>5. DATE OF BIRTH</b></td>
                 <td>{{ employee.dob }}</td>
+
+                <td><b>6. PLACE OF BIRTH</b></td>
+                <td>{{ employee.place_of_birth }}</td>
             </tr>
 
             <tr>
@@ -143,161 +156,133 @@
                 <td><b>9. DATE OF JOINING</b></td>
                 <td>{{ employee.joining_date }}</td>
 
-                <td><b>10. DESIGNATION</b></td>
+                <td><b>10. DEPARTMENT</b></td>
+                <td>{{ employee.department }}</td>
+            </tr>
+
+            <tr>
+                <td><b>11. DESIGNATION</b></td>
                 <td>{{ employee.designation }}</td>
-            </tr>
 
-            <tr>
-                <td><b>11. CATEGORY</b></td>
+                <td><b>12. CATEGORY</b></td>
                 <td>{{ employee.category }}</td>
+            </tr>
 
-                <td><b>12. TYPE OF EMPLOYMENT</b></td>
+            <tr>
+                <td><b>13. TYPE OF EMPLOYMENT</b></td>
                 <td>{{ employee.employment_type }}</td>
-            </tr>
 
-            <tr>
-                <td><b>13. MOBILE</b></td>
+                <td><b>14. MOBILE</b></td>
                 <td>{{ employee.mobile }}</td>
+            </tr>
 
-                <td><b>14. UAN</b></td>
+            <tr>
+                <td><b>15. UAN</b></td>
                 <td>{{ employee.uan }}</td>
-            </tr>
 
-            <tr>
-                <td><b>15. PAN</b></td>
+                <td><b>16. PAN</b></td>
                 <td>{{ employee.pan }}</td>
+            </tr>
 
-                <td><b>16. ESIC IP</b></td>
+            <tr>
+                <td><b>17. NOMINEE (To be filled on the basis of Nomination Form)</b></td>
+                <td>{{ employee.nominee_name }}</td>
+
+                <td><b>18. EPS/NPS</b></td>
+                <td>{{ employee.eps_nps }}</td>
+
+            </tr>
+            <tr>
+                 <td><b>19. DETAILS OF FAMILY</b></td>
+                <td colspan="3">{{ employee.family_details }}</td>
+
+                
+            </tr>
+            <tr>
+                <td><b>20. DETAILS OF POSTING</b></td>
+                <td colspan="3">{{ employee.posting_details }}</td>
+
+            </tr>
+
+            <tr>
+                <td><b>21. PAY</b></td>
+                <td>{{ employee.pay }}</td>
+
+                <td><b>22. PROMOTION</b></td>
+                <td>{{ employee.promotion }}</td>
+
+            </tr>
+
+            <tr>
+                <td><b>23. ESIC IP INSURANCE NO.</b></td>
                 <td>{{ employee.esic_ip }}</td>
-            </tr>
 
-            <tr>
-                <td><b>17. LWF</b></td>
-                <td>{{ employee.lwf }}</td>
-
-                <td><b>18. AADHAAR</b></td>
+                <td><b>24. AADHAAR NUMBER</b></td>
                 <td>{{ employee.aadhaar }}</td>
-            </tr>
 
-            <tr>
-                <td><b>19. BANK A/C NO.</b></td>
+            
+            </tr>
+            <tr>    
+                 <td><b>25. BANK A/C NO.</b></td>
                 <td>{{ employee.bank_account_no }}</td>
 
-                <td><b>20. BANK NAME</b></td>
+                <td><b>26. BANK NAME</b></td>
                 <td>{{ employee.bank_name }}</td>
+
+                
+            </tr>
+            <tr>
+                <td><b>27. BRANCH (IFSC)</b></td>
+                <td>{{ employee.ifsc }}</td>
+
             </tr>
 
             <tr>
-                <td><b>21. IFSC</b></td>
-                <td colspan="3">{{ employee.ifsc }}</td>
-            </tr>
-
-            <tr>
-                <td><b>22. PRESENT ADDRESS</b></td>
+                <td><b>28. PRESENT ADDRESS</b></td>
                 <td colspan="3">{{ employee.present_address }}</td>
             </tr>
 
             <tr>
-                <td><b>23. PERMANENT ADDRESS</b></td>
+                <td><b>29. PERMANENT ADDRESS</b></td>
                 <td colspan="3">{{ employee.permanent_address }}</td>
             </tr>
 
             <tr>
-                <td><b>24. SERVICE BOOK NO.</b></td>
+                <td><b>30. SERVICE BOOK NO.</b></td>
                 <td>{{ employee.service_book_no }}</td>
 
-                <td><b>25. DATE OF EXIT</b></td>
+                <td><b>31. DATE OF EXIT</b></td>
                 <td>{{ employee.exit_date }}</td>
             </tr>
 
             <tr>
-                <td><b>26. REASON FOR EXIT</b></td>
+                <td><b>32. REASON FOR EXIT</b></td>
                 <td colspan="3">{{ employee.exit_reason }}</td>
             </tr>
 
             <tr>
-                <td><b>27. IDENTIFICATION MARK</b></td>
+                <td><b>33. MARK OF IDENTIFICATION </b></td>
                 <td colspan="3">{{ employee.identification_mark }}</td>
             </tr>
 
             <tr>
-                <td><b>28. REMARKS</b></td>
+                <td><b>34. REMARKS</b></td>
                 <td colspan="3">{{ employee.remarks }}</td>
             </tr>
-
         </table>
 
+        <div class="employer-signature">
+            <img src="/media/Employer_sign.png" alt="Employer Signature">
+            <p><b>Signature of Employer</b></p>
+</div>
+
     </div>
+   
 
-    <!-- PAGE 2 -->
-
-    <div class="a4-sheet">
-
-        <div class="company-header">
-
-            <h2>FORM - B</h2>
-
-            <h3>MINES ACT DETAILS</h3>
-
-        </div>
-
-        <div class="section-title">
-            PART - B : FOR THE MINES ACT, 1952
-        </div>
 
         <table class="details-table">
 
-            <tr>
-                <td><b>1. TOKEN NUMBER ISSUED</b></td>
-                <td>{{ employee.token_number }}</td>
-
-                <td><b>2. NAME</b></td>
-                <td>{{ employee.name }}</td>
-            </tr>
-
-            <tr>
-                <td><b>3. DATE OF FIRST APPOINTMENT</b></td>
-                <td>{{ employee.first_appointment_date }}</td>
-
-                <td><b>4. AGE / FITNESS CERTIFICATE</b></td>
-                <td>{{ employee.age_fitness_certificate }}</td>
-            </tr>
-
-            <tr>
-                <td><b>5. PLACE OF EMPLOYMENT</b></td>
-                <td>{{ employee.place_of_employment }}</td>
-
-                <td><b>6. VOCATIONAL TRAINING NO.</b></td>
-                <td>{{ employee.vocational_training_number }}</td>
-            </tr>
-
-            <tr>
-                <td><b>7. VOCATIONAL TRAINING DATE</b></td>
-                <td>{{ employee.vocational_training_date }}</td>
-
-                <td><b>8. NOMINEE NAME</b></td>
-                <td>{{ employee.nominee_name }}</td>
-            </tr>
-
-            <tr>
-                <td><b>9. NOMINEE ADDRESS</b></td>
-                <td colspan="3">{{ employee.nominee_address }}</td>
-            </tr>
-
-            <tr>
-                <td><b>10. EMERGENCY CONTACT NAME</b></td>
-                <td>{{ employee.emergency_contact_name }}</td>
-
-                <td><b>11. EMERGENCY MOBILE</b></td>
-                <td>{{ employee.emergency_mobile }}</td>
-            </tr>
-
-            <tr>
-                <td><b>12. EMERGENCY ADDRESS</b></td>
-                <td colspan="3">{{ employee.emergency_contact_address }}</td>
-            </tr>
-
-        </table>
+           
 
         <!-- DOCUMENTS -->
 
@@ -348,6 +333,7 @@
 
         <div class="bottom-actions no-print">
 
+            {% if perms.employees.change_employee %}
             <a href="{% url 'edit_employee' employee.id %}"
                 class="edit-btn">
 
@@ -355,6 +341,7 @@
                     Edit
 
             </a>
+            {% endif %}
 
             <button onclick="window.print()"
                     class="save-btn">
@@ -364,21 +351,30 @@
 
             </button>
 
-            <a href="/employees/"
-               class="delete-btn">
+            {% if perms.employees.delete_employee %}
+            <a href="{% url 'delete_employee' employee.id %}"
+                class="delete-btn"
+                onclick="return confirm('Are you sure to delete this employee?')">
 
-                <i class="fa-solid fa-trash"></i>
-                Delete
+                    <i class="fa-solid fa-trash"></i>
+                    Delete
 
             </a>
+            {% endif %}
 
         </div>
 
-    </div>
+    
 
 </div>
 
+
 <style>
+    *{
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-sizing:border-box;
+}
 
 body{
     background:#e2e8f0;
@@ -581,157 +577,250 @@ body{
     background:#dc2626;
 }
 
+.employer-signature{
+    margin-top:30px;
+    text-align:left;
+}
+
+.employer-signature img{
+    width:140px;
+    height:auto;
+    display:block;
+}
+
+.employer-signature p{
+    margin-top:5px;
+    font-size:12px;
+    font-weight:600;
+}
+
 /* PRINT */
+
+/* PRINT SETTINGS */
 
 @media print {
 
     @page{
-        size:A4;
-        margin:8mm;
+        size:A4 portrait;
+        margin:0;
     }
 
+    *{
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        box-sizing:border-box !important;
+    }
+
+    html,
     body{
-        background:#ffffff !important;
+        width:210mm;
         margin:0 !important;
         padding:0 !important;
+        background:#fff !important;
+        overflow:visible !important;
     }
 
-    /* HIDE UNWANTED ITEMS */
+    /* HIDE NON PRINT ITEMS */
 
     .sidebar,
     .topbar,
-    .top-section,
+    .top-bar,
     .top-actions,
-    .footer,
-    .edit-btn,
-    .delete-btn,
-    .save-btn,
-    .print-btn,
-    .action-buttons,
+    .bottom-actions,
+    .document-section,
     .no-print{
         display:none !important;
     }
 
-    /* FULL WIDTH */
+    /* MAIN CONTAINER */
 
-    .main-content,
-    .page-content,
-    .employee-detail-page{
+    .details-page{
         margin:0 !important;
         padding:0 !important;
-        width:100% !important;
     }
 
-    /* CARD */
+    /* A4 PAGE */
 
-    .detail-card{
-        box-shadow:none !important;
-        border:none !important;
-        margin:0 !important;
-        padding:0 !important;
-        border-radius:0 !important;
+    .a4-sheet{
+
+    width:190mm !important;
+
+    min-height:auto !important;
+    height:auto !important;
+
+    margin:0 auto !important;
+
+    padding:5mm !important;
+
+    background:#fff !important;
+
+    box-shadow:none !important;
+
+    overflow:visible !important;
+
+    page-break-before:auto !important;
+    page-break-after:auto !important;
+    page-break-inside:auto !important;
     }
 
-    /* COMPANY HEADER */
+    /* ONLY SECOND PAGE STARTS NEW PAGE */
+
+    
+
+
+    /* HEADER */
 
     .company-header{
-        margin-bottom:8px !important;
-        padding-bottom:5px !important;
+        text-align:center;
+        margin-bottom:10px !important;
     }
 
     .company-header h2{
-        font-size:20px !important;
+        font-size:24px !important;
         margin-bottom:4px !important;
     }
 
-    .company-header h4{
-        font-size:16px !important;
-        margin-bottom:6px !important;
+    .company-header h3{
+        font-size:18px !important;
+        margin-bottom:8px !important;
     }
 
     .company-header p{
-        margin:2px 0 !important;
-        font-size:12px !important;
-    }
-
-    /* PART TITLE */
-
-    .part-title{
-        margin-top:8px !important;
-        margin-bottom:10px !important;
-        padding:8px 12px !important;
-        font-size:14px !important;
-    }
-
-    /* GRID */
-
-    .detail-grid{
-        display:grid !important;
-        grid-template-columns:1fr 1fr !important;
-        gap:8px !important;
-    }
-
-    /* DETAIL ITEM */
-
-    .detail-item{
-        margin-bottom:5px !important;
-        padding:6px !important;
-        page-break-inside:avoid !important;
-        break-inside:avoid !important;
-    }
-
-    .detail-item label{
         font-size:11px !important;
-        margin-bottom:2px !important;
+        margin:2px 0 !important;
     }
 
-    .detail-item p{
-        font-size:12px !important;
-        margin:0 !important;
+    /* SECTION */
+
+    .section-title{
+        background:#0f172a !important;
+        color:#fff !important;
+
+        text-align:center;
+
+        padding:8px !important;
+
+        border-radius:5px !important;
+
+        margin-bottom:12px !important;
+
+        font-size:13px !important;
+
+        font-weight:700;
     }
 
     /* PHOTO */
 
-    .photo-section{
-        page-break-inside:avoid !important;
-        margin-top:8px !important;
+    .photo-row{
+    display:flex;
+    justify-content:flex-end;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:12px !important;
     }
 
-    .photo-box img{
-        width:90px !important;
-        height:110px !important;
-        object-fit:cover !important;
+    
+.employee-photo-box{
+
+    width:95px !important;
+    height:120px !important;
+
+    border:1px solid #666 !important;
+
+    overflow:hidden !important;
+
+    display:flex !important;
+    flex-direction:column !important;
+
+    align-items:center !important;
+    justify-content:flex-start !important;
+
+    padding:2px !important;
+
+    box-sizing:border-box !important;
     }
 
-    /* IMPORTANT */
+    /* EMPLOYEE PHOTO + SIGNATURE */
 
-    .part-a-section{
-        page-break-after:always !important;
-        break-after:page !important;
-    }
+    .employee-photo-box img{
 
-    .part-b-section{
-        page-break-before:auto !important;
-        break-before:auto !important;
-        margin-top:0 !important;
-        padding-top:0 !important;
-    }
+        max-width:100% !important;
+        max-height:82px !important;
 
-    /* REMOVE EXTRA LAST PAGE */
-
-    html,
-    body{
+        width:auto !important;
         height:auto !important;
-        overflow:visible !important;
+
+        object-fit:contain !important;
+
+        display:block !important;
+
+        margin:auto !important;
     }
 
-    .part-b-section:last-child{
-        page-break-after:auto !important;
-        break-after:auto !important;
+    /* QR IMAGE */
+
+    .employee-photo-box:last-child img{
+
+        width:78px !important;
+        height:78px !important;
+
+        object-fit:contain !important;
+
+        margin:auto !important;
+    }
+
+/* LABEL */
+
+    .employee-photo-box span,
+    .employee-photo-box h6{
+
+        font-size:9px !important;
+
+        text-align:center !important;
+
+        margin-top:2px !important;
+
+        line-height:1.2 !important;
+    }
+
+    /* TABLE */
+
+    .details-table{
+        width:100%;
+
+        border-collapse:collapse;
+
+        table-layout:fixed;
+    }
+
+    .details-table td{
+
+        border:1px solid #666 !important;
+
+        padding:5px 6px !important;
+
+        font-size:10px !important;
+
+        vertical-align:top;
+
+        word-wrap:break-word;
+    }
+
+    .details-table td b{
+        font-size:10px !important;
+    }
+
+    .employer-signature{
+    margin-top:20px !important;
+    text-align:left !important;
+    }
+
+    .employer-signature img{
+        width:120px !important;
+        height:auto !important;
     }
 
 }
-
 </style>
 
 {% endblock %}

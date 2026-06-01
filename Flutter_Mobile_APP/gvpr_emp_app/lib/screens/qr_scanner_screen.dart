@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class QRScannerScreen extends StatefulWidget {
   const QRScannerScreen({super.key});
@@ -15,7 +16,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
   bool scanned = false;
 
   late AnimationController animationController;
-
   late Animation<double> animation;
 
   @override
@@ -53,14 +53,31 @@ class _QRScannerScreenState extends State<QRScannerScreen>
 
         showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (_) => AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            title: const Text("QR Scan Successful"),
-            content: Text(code),
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                ),
+                SizedBox(width: 8),
+                Text("QR Scan Successful"),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Text(
+                code,
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+            ),
             actions: [
-              ElevatedButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
 
@@ -71,11 +88,53 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                     },
                   );
                 },
-                child: const Text("OK"),
-              )
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+
+                  try {
+                    final Uri uri = Uri.parse(code);
+
+                    print("Opening URL: $uri");
+
+                    final bool launched = await launchUrl(
+                      uri,
+                      mode: LaunchMode.externalApplication,
+                    );
+
+                    if (!launched && mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Failed to open URL"),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Error: $e"),
+                        ),
+                      );
+                    }
+                  }
+
+                  Future.delayed(
+                    const Duration(seconds: 2),
+                    () {
+                      scanned = false;
+                    },
+                  );
+                },
+                child: const Text("Open"),
+              ),
             ],
           ),
         );
+
+        break;
       }
     }
   }
@@ -149,7 +208,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
               ),
               child: Stack(
                 children: [
-                  /// ANIMATED SCAN LINE
                   AnimatedBuilder(
                     animation: animation,
                     builder: (context, child) {
@@ -183,9 +241,9 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                   color: Colors.white24,
                 ),
               ),
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(
                     Icons.qr_code_scanner,
                     color: Colors.greenAccent,

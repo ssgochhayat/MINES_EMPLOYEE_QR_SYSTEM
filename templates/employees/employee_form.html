@@ -19,7 +19,7 @@
                 {% if edit_mode %}
                     <h2>EDIT EMPLOYEE</h2>
                 {% else %}
-                    <h2>FORM - A</h2>
+                    <h2>FORM - XIII</h2>
                     <h2>EMPLOYEE REGISTER FORM</h2>
                 {% endif %}
 
@@ -30,7 +30,7 @@
                 </h6>
 
                 <h6>
-                    <b>NAME OF OWNER:</b>
+                    <b>NAME OF EMPLOYER/OWNER:</b>
                     GVPR ENGINEERS LIMITED
                 </h6>
 
@@ -59,40 +59,40 @@
 
         <div class="form-card">
 
-            <div class="part-title">
-                PART - A : FOR ALL ESTABLISHMENT
-            </div>
+        
 
             <div class="row">
 
-                <div class="col-md-6 form-group">
-                    <label>1. SERIAL NO.</label>
-                    {{ form.employee_register_no }}
-                </div>
+                
 
                 <div class="col-md-6 form-group">
-                    <label>2. EMPLOYEE CODE</label>
+                    <label>1. EMPLOYEE CODE</label>
                     {{ form.employee_id }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>3. NAME & SURNAME OF EMPLOYEE</label>
+                    <label>2. NAME & SURNAME OF EMPLOYEE</label>
                     {{ form.name }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>4. GENDER</label>
+                    <label>3. GENDER</label>
                     {{ form.gender }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>5. FATHER / SPOUSE NAME</label>
+                    <label>4. FATHER’S/MOTHER’S/SPOUSE’S NAME</label>
                     {{ form.father_spouse_name }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>6. DATE OF BIRTH</label>
+                    <label>5. DATE OF BIRTH</label>
                     {{ form.dob }}
+                </div>
+
+                 <div class="col-md-6 form-group">
+                    <label>6. PLACE OF BIRTH</label>
+                    {{ form.place_of_birth }}
                 </div>
 
                 <div class="col-md-6 form-group">
@@ -109,69 +109,100 @@
                     <label>9. DATE OF JOINING</label>
                     {{ form.joining_date }}
                 </div>
+                <div class="col-md-6 form-group">
+                    <label>10. DEPARTMENT</label>
+                    {{ form.department }}
+                </div>
 
                 <div class="col-md-6 form-group">
-                    <label>10. DESIGNATION</label>
+                    <label>11. DESIGNATION</label>
                     {{ form.designation }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>11. CATEGORY</label>
+                    <label>12. CATEGORY</label>
                     {{ form.category }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>12. TYPE OF EMPLOYMENT</label>
+                    <label>13. TYPE OF EMPLOYMENT</label>
                     {{ form.employment_type }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>13. MOBILE</label>
+                    <label>14. MOBILE NUMBER</label>
                     {{ form.mobile }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>14. UAN</label>
+                    <label>15. UAN</label>
                     {{ form.uan }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>15. PAN</label>
+                    <label>16. PAN</label>
                     {{ form.pan }}
+                </div>
+                <div class="col-md-6 form-group">
+                    <label>17. NOMINEE NAME (To be filled on the basis of Nomination Form)</label>
+                    {{ form.nominee_name }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>16. ESIC IP</label>
+                    <label>18. EPS / NPS</label>
+                    {{ form.eps_nps }}
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>19. DETAILS OF FAMILY</label>
+                    {{ form.family_details }}
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label>20. DETAILS OF POSTING</label>
+                    {{ form.posting_details }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>21. PAY</label>
+                    {{ form.pay }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>22. PROMOTION</label>
+                    {{ form.promotion }}
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label>23. ESIC IP INSURANCE NO.</label>
                     {{ form.esic_ip }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>17. LWF</label>
-                    {{ form.lwf }}
-                </div>
-
-                <div class="col-md-6 form-group">
-                    <label>18. AADHAAR</label>
+                    <label>24. AADHAAR NUMBER</label>
                     {{ form.aadhaar }}
                 </div>
 
+
+              
+
                 <div class="col-md-6 form-group">
-                    <label>19. BANK ACCOUNT NO.</label>
+                    <label>25. BANK ACCOUNT NO.</label>
                     {{ form.bank_account_no }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>20. BANK NAME</label>
+                    <label>26. BANK NAME</label>
                     {{ form.bank_name }}
                 </div>
 
                 <div class="col-md-12 form-group">
-                    <label>21. IFSC</label>
+                    <label>27. BRANCH (IFSC)</label>
                     {{ form.ifsc }}
                 </div>
 
                 <div class="col-md-12 form-group">
-                    <label>22. PRESENT ADDRESS</label>
+                    <label>28. PRESENT ADDRESS</label>
                     {{ form.present_address }}
                 </div>
 
@@ -192,27 +223,27 @@
                 </div>
 
                 <div class="col-md-12 form-group">
-                    <label>23. PERMANENT ADDRESS</label>
+                    <label>29. PERMANENT ADDRESS</label>
                     {{ form.permanent_address }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>24. SERVICE BOOK NO.</label>
+                    <label>30. SERVICE BOOK NO.</label>
                     {{ form.service_book_no }}
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label>25. DATE OF EXIT</label>
+                    <label>31. DATE OF EXIT</label>
                     {{ form.exit_date }}
                 </div>
 
                 <div class="col-md-12 form-group">
-                    <label>26. REASON FOR EXIT</label>
+                    <label>32. REASON FOR EXIT</label>
                     {{ form.exit_reason }}
                 </div>
 
                 <div class="col-md-12 form-group">
-                    <label>27. IDENTIFICATION MARK</label>
+                    <label>33. MARK OF IDENTIFICATION </label>
                     {{ form.identification_mark }}
                 </div>
 
@@ -220,7 +251,7 @@
 
                 <div class="col-md-6 form-group">
 
-                    <label>28. EMPLOYEE PHOTO</label>
+                    <label>34. EMPLOYEE PHOTO</label>
 
                     {% if employee and employee.photo %}
                         <div class="preview-box">
@@ -236,7 +267,7 @@
 
                 <div class="col-md-6 form-group">
 
-                    <label>29. SIGNATURE</label>
+                    <label>35. SPECIMEN SIGNATURE/THUMB IMPRESSION</label>
 
                     {% if employee and employee.signature %}
                         <div class="preview-box">
@@ -249,95 +280,69 @@
                 </div>
 
                 <div class="col-md-12 form-group">
-                    <label>30. REMARKS</label>
+                    <label>36. REMARKS</label>
                     {{ form.remarks }}
                 </div>
+                <div class="col-md-12 form-group">
 
-            </div>
-
-        </div>
-
-        <!-- PART B -->
-
-        <div class="form-card mt-4">
-
-            <div class="part-title">
-                PART - B : FOR THE MINES ACT, 1952
-            </div>
-
-            <div class="row">
-
-                <div class="col-md-6 form-group">
-                    <label>1. TOKEN NUMBER ISSUED</label>
-                    {{ form.token_number }}
-                </div>
-
-                <div class="col-md-6 form-group">
-
-                    <label>2. NAME</label>
+                    <label>
+                        <b>37. Upload Multiple Documents</b>
+                    </label>
 
                     <input
-                        type="text"
-                        id="part_b_name"
+                        type="file"
+                        name="documents"
+                        multiple
                         class="form-control"
-                        readonly
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
                     >
 
+                    <small class="text-muted">
+                        You can select multiple files at once.
+                    </small>
+
                 </div>
 
-                <div class="col-md-6 form-group">
-                    <label>3. DATE OF FIRST APPOINTMENT</label>
-                    {{ form.first_appointment_date }}
-                </div>
-
-                <div class="col-md-6 form-group">
-                    <label>4. AGE / FITNESS CERTIFICATE</label>
-                    {{ form.age_fitness_certificate }}
-                </div>
-
-                <div class="col-md-6 form-group">
-                    <label>5. PLACE OF EMPLOYMENT</label>
-                    {{ form.place_of_employment }}
-                </div>
-
-                <div class="col-md-6 form-group">
-                    <label>6. VOCATIONAL TRAINING NUMBER</label>
-                    {{ form.vocational_training_number }}
-                </div>
-
-                <div class="col-md-6 form-group">
-                    <label>7. VOCATIONAL TRAINING DATE</label>
-                    {{ form.vocational_training_date }}
-                </div>
-
-                <div class="col-md-6 form-group">
-                    <label>8. NOMINEE NAME</label>
-                    {{ form.nominee_name }}
-                </div>
+                {% if edit_mode and employee.documents.all %}
 
                 <div class="col-md-12 form-group">
-                    <label>9. NOMINEE ADDRESS</label>
-                    {{ form.nominee_address }}
+
+                    <label>
+                        <b>Uploaded Documents</b>
+                    </label>
+
+                    <div class="document-box">
+
+                        {% for doc in employee.documents.all %}
+
+                            <div class="doc-item">
+
+                                <a href="{{ doc.file.url }}" target="_blank">
+
+                                    <i class="fa-solid fa-file"></i>
+
+                                    {{ doc.document_name }}
+
+                                </a>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
                 </div>
 
-                <div class="col-md-6 form-group">
-                    <label>10. EMERGENCY CONTACT NAME</label>
-                    {{ form.emergency_contact_name }}
-                </div>
-
-                <div class="col-md-6 form-group">
-                    <label>11. EMERGENCY MOBILE</label>
-                    {{ form.emergency_mobile }}
-                </div>
-
-                <div class="col-md-12 form-group">
-                    <label>12. EMERGENCY CONTACT ADDRESS</label>
-                    {{ form.emergency_contact_address }}
-                </div>
+                {% endif %}
+                 
 
             </div>
 
         </div>
+
+       
+
+    
 
     </form>
 
@@ -435,6 +440,27 @@ body{
     border:2px solid #cbd5e1;
     background:white;
     padding:4px;
+}
+.document-box{
+    background:#f8fafc;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:15px;
+}
+
+.doc-item{
+    padding:8px 0;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.doc-item:last-child{
+    border-bottom:none;
+}
+
+.doc-item a{
+    text-decoration:none;
+    color:#2563eb;
+    font-weight:600;
 }
 
 @media(max-width:768px){

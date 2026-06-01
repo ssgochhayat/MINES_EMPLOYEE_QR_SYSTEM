@@ -15,16 +15,21 @@
 
         <div class="header-actions">
 
-            <button class="notify-btn">
+            <button class="notify-btn" type="button" data-notification-open aria-label="Open notifications">
                 <i class="fa-solid fa-bell"></i>
+                {% if notifications_count %}
+                    <span class="dashboard-notification-badge">{{ notifications_count }}</span>
+                {% endif %}
             </button>
 
+            {% if perms.employees.add_employee %}
             <a href="/employees/add/" class="add-employee-btn">
 
                 <i class="fa-solid fa-user-plus"></i>
                 Add Employee
 
             </a>
+            {% endif %}
 
         </div>
 
@@ -120,9 +125,11 @@
 
                 <h4>Recent Employees</h4>
 
+                {% if perms.employees.view_employee %}
                 <a href="/employees/">
                     View All
                 </a>
+                {% endif %}
 
             </div>
 
@@ -174,6 +181,7 @@
 
             <div class="quick-actions">
 
+                {% if perms.employees.add_employee %}
                 <a href="/employees/add/" class="quick-btn">
 
                     <div class="quick-icon blue">
@@ -186,7 +194,9 @@
                     </div>
 
                 </a>
+                {% endif %}
 
+                {% if perms.employees.view_employee %}
                 <a href="/employees/" class="quick-btn">
 
                     <div class="quick-icon green">
@@ -199,21 +209,25 @@
                     </div>
 
                 </a>
+                {% endif %}
 
-                <a href="#" class="quick-btn">
+                {% if perms.employees.export_employee_excel %}
+                <a href="{% url 'reports' %}" class="quick-btn">
 
                     <div class="quick-icon orange">
                         <i class="fa-solid fa-file-export"></i>
                     </div>
 
                     <div>
-                        <h5>Export Data</h5>
-                        <p>Download Excel report</p>
+                        <h5>Reports</h5>
+                        <p>Review and export records</p>
                     </div>
 
                 </a>
+                {% endif %}
 
-                <a href="#" class="quick-btn">
+                {% if perms.employees.scan_employee_qr %}
+                <a href="{% url 'qr_scanner' %}" class="quick-btn">
 
                     <div class="quick-icon purple">
                         <i class="fa-solid fa-qrcode"></i>
@@ -225,6 +239,7 @@
                     </div>
 
                 </a>
+                {% endif %}
 
             </div>
 
@@ -279,6 +294,25 @@
     background:white;
     box-shadow:0 2px 8px rgba(15,23,42,0.05);
     color:#0f172a;
+    position:relative;
+}
+
+.dashboard-notification-badge{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    min-width:19px;
+    height:19px;
+    padding:0 6px;
+    border-radius:999px;
+    background:#ef4444;
+    color:white;
+    border:2px solid #f1f5f9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    font-weight:700;
 }
 
 .add-employee-btn{

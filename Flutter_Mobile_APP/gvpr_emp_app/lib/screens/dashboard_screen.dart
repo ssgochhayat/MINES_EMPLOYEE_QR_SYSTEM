@@ -15,6 +15,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List employees = [];
 
   bool loading = true;
+  int selectedIndex = 0;
 
   @override
   void initState() {
@@ -39,6 +40,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: buildSelectedPage(),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        backgroundColor: Colors.white,
+        indicatorColor: const Color(0xffDCFCE7),
+        elevation: 8,
+        onDestinationSelected: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard),
+            label: "Dashboard",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.people_outline),
+            selectedIcon: Icon(Icons.people),
+            label: "Employees",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.qr_code_scanner_outlined),
+            selectedIcon: Icon(Icons.qr_code_scanner),
+            label: "Scan QR",
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSelectedPage() {
+    if (selectedIndex == 1) {
+      return const EmployeeScreen();
+    }
+
+    if (selectedIndex == 2) {
+      return const QRScannerScreen();
+    }
+
+    return buildDashboardPage();
+  }
+
+  Widget buildDashboardPage() {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -143,12 +190,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const EmployeeScreen(),
-                              ),
-                            );
+                            setState(() {
+                              selectedIndex = 1;
+                            });
                           },
                           icon: const Icon(
                             Icons.people,
@@ -176,12 +220,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const QRScannerScreen(),
-                              ),
-                            );
+                            setState(() {
+                              selectedIndex = 2;
+                            });
                           },
                           icon: const Icon(
                             Icons.qr_code_scanner,

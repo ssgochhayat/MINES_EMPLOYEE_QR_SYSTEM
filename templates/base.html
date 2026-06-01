@@ -51,54 +51,68 @@
 
         <ul class="sidebar-menu">
 
-            <li>
-                <a href="/">
-                    <i class="fa-solid fa-chart-line"></i>
-                    Dashboard
-                </a>
-            </li>
+            {% if perms.employees.view_dashboard %}
+                <li>
+                    <a href="/">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Dashboard
+                    </a>
+                </li>
+            {% endif %}
 
-            <li>
-                <a href="/employees/">
-                    <i class="fa-solid fa-users"></i>
-                    Employees
-                </a>
-            </li>
+            {% if perms.employees.view_employee %}
+                <li>
+                    <a href="/employees/">
+                        <i class="fa-solid fa-users"></i>
+                        Employees
+                    </a>
+                </li>
+            {% endif %}
 
-            <li>
-                <a href="/employees/add/">
-                    <i class="fa-solid fa-user-plus"></i>
-                    Add Employee
-                </a>
-            </li>
+            {% if perms.employees.add_employee %}
+                <li>
+                    <a href="/employees/add/">
+                        <i class="fa-solid fa-user-plus"></i>
+                        Add Employee
+                    </a>
+                </li>
+            {% endif %}
 
-            <li>
-                <a href="/upload-excel/">
-                    <i class="fa-solid fa-file-excel"></i>
-                    Upload Excel
-                </a>
-            </li>
+            {% if perms.employees.import_employee_excel %}
+                <li>
+                    <a href="{% url 'upload_excel_page' %}">
+                        <i class="fa-solid fa-file-excel"></i>
+                        Upload Excel
+                    </a>
+                </li>
+            {% endif %}
 
-            <li>
-                <a href="#">
-                    <i class="fa-solid fa-qrcode"></i>
-                    QR Scanner
-                </a>
-            </li>
+            {% if perms.employees.scan_employee_qr %}
+                <li>
+                    <a href="{% url 'qr_scanner' %}">
+                        <i class="fa-solid fa-qrcode"></i>
+                        QR Scanner
+                    </a>
+                </li>
+            {% endif %}
 
-            <li>
-                <a href="#">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    Reports
-                </a>
-            </li>
+            {% if perms.employees.export_employee_excel %}
+                <li>
+                    <a href="{% url 'reports' %}">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        Reports
+                    </a>
+                </li>
+            {% endif %}
 
-            <li>
-                <a href="#">
-                    <i class="fa-solid fa-gear"></i>
-                    Settings
-                </a>
-            </li>
+            {% if request.user.is_staff %}
+                <li>
+                    <a href="/admin/">
+                        <i class="fa-solid fa-gear"></i>
+                        Admin Portal
+                    </a>
+                </li>
+            {% endif %}
 
         </ul>
 
@@ -128,6 +142,7 @@
 
                 <!-- SEARCH -->
 
+                {% if perms.employees.view_employee %}
                 <form method="GET" action="/employees/">
 
                     <div class="search-box">
@@ -143,12 +158,46 @@
                     </div>
 
                 </form>
+                {% endif %}
 
                 <!-- NOTIFICATION -->
 
-                <button class="notification-btn">
-                    <i class="fa-solid fa-bell"></i>
-                </button>
+                <div class="notification-wrap">
+
+                    <button class="notification-btn" type="button" id="notificationToggle" aria-label="Open notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        {% if notifications_count %}
+                            <span class="notification-badge">{{ notifications_count }}</span>
+                        {% endif %}
+                    </button>
+
+                    <div class="notification-panel" id="notificationPanel">
+
+                        <div class="notification-header">
+                            <div>
+                                <h5>Notifications</h5>
+                                <p>{{ notifications_count }} pending update{{ notifications_count|pluralize }}</p>
+                            </div>
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+
+                        <div class="notification-list">
+                            {% for notification in notifications %}
+                                <a href="{{ notification.url }}" class="notification-item">
+                                    <span class="notification-icon {{ notification.tone }}">
+                                        <i class="fa-solid {{ notification.icon }}"></i>
+                                    </span>
+                                    <span>
+                                        <strong>{{ notification.title }}</strong>
+                                        <small>{{ notification.message }}</small>
+                                    </span>
+                                </a>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                </div>
 
                 <!-- ADMIN PROFILE -->
 
@@ -198,6 +247,39 @@
     </div>
 
 </body>
+
+<script>
+    const notificationToggle = document.getElementById('notificationToggle');
+    const notificationPanel = document.getElementById('notificationPanel');
+
+    if (notificationToggle && notificationPanel) {
+        const notificationTriggers = document.querySelectorAll('[data-notification-open]');
+
+        notificationToggle.addEventListener('click', function(event) {
+            event.stopPropagation();
+            notificationPanel.classList.toggle('show');
+        });
+
+        notificationTriggers.forEach(function(trigger) {
+            trigger.addEventListener('click', function(event) {
+                event.stopPropagation();
+                notificationPanel.classList.toggle('show');
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!notificationPanel.contains(event.target)) {
+                notificationPanel.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                notificationPanel.classList.remove('show');
+            }
+        });
+    }
+</script>
 
 </html>
 
@@ -357,6 +439,143 @@ body{
     border-radius:14px;
     background:#f8fafc;
     font-size:18px;
+    color:#0f172a;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:0.2s;
+}
+
+.notification-btn:hover{
+    background:#e2e8f0;
+}
+
+.notification-wrap{
+    position:relative;
+}
+
+.notification-badge{
+    position:absolute;
+    top:-5px;
+    right:-5px;
+    min-width:20px;
+    height:20px;
+    padding:0 6px;
+    border-radius:999px;
+    background:#ef4444;
+    color:white;
+    border:2px solid white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    font-weight:700;
+}
+
+.notification-panel{
+    width:360px;
+    max-width:calc(100vw - 40px);
+    position:absolute;
+    top:58px;
+    right:0;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    box-shadow:0 20px 45px rgba(15,23,42,0.16);
+    overflow:hidden;
+    z-index:100;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(8px);
+    transition:0.2s;
+}
+
+.notification-panel.show{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+}
+
+.notification-header{
+    padding:18px;
+    background:#0f172a;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.notification-header h5{
+    margin:0;
+    font-size:16px;
+    font-weight:700;
+}
+
+.notification-header p{
+    margin:3px 0 0;
+    color:#cbd5e1;
+    font-size:12px;
+}
+
+.notification-list{
+    max-height:340px;
+    overflow-y:auto;
+}
+
+.notification-item{
+    text-decoration:none;
+    color:#0f172a;
+    display:flex;
+    gap:12px;
+    padding:15px 18px;
+    border-bottom:1px solid #f1f5f9;
+    transition:0.2s;
+}
+
+.notification-item:hover{
+    background:#f8fafc;
+    color:#0f172a;
+}
+
+.notification-item strong{
+    display:block;
+    font-size:14px;
+    line-height:1.35;
+}
+
+.notification-item small{
+    display:block;
+    margin-top:3px;
+    color:#64748b;
+    font-size:12px;
+}
+
+.notification-icon{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+}
+
+.notification-icon.blue{
+    background:#2563eb;
+}
+
+.notification-icon.green{
+    background:#16a34a;
+}
+
+.notification-icon.orange{
+    background:#ea580c;
+}
+
+.notification-icon.purple{
+    background:#7c3aed;
 }
 
 /* PROFILE */
@@ -441,6 +660,11 @@ body{
     .topbar-right{
         width:100%;
         flex-wrap:wrap;
+    }
+
+    .notification-panel{
+        left:0;
+        right:auto;
     }
 
     .search-box{

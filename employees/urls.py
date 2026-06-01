@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.dashboard, name='dashboard'),
     path('employees/', views.employee_list, name='employee_list'),
     path('employees/add/', views.add_employee, name='add_employee'),
+    path('reports/', views.reports, name='reports'),
     path('export-excel/', views.export_employees_excel, name='export_excel'),
     path('employees/', api_views.employee_list_api),
     path('employee/<str:employee_id>/', api_views.employee_detail_api),
@@ -17,5 +18,7 @@ urlpatterns = [
     path("upload-excel/", upload_employee_excel),
     path('employee/<int:id>/',views.employee_detail, name='employee_detail'),
     path('employees/edit/<int:id>/',views.edit_employee,name='edit_employee'),
+    path('employee-pdf/<int:id>/',views.employee_pdf,name='employee_pdf'),
+    
 ]
                     

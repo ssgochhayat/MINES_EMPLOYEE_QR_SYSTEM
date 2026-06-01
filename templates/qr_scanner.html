@@ -1,0 +1,788 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="scanner-page">
+
+    <div class="scanner-header">
+        <div>
+            <h2>QR Scanner</h2>
+            <p>Scan an employee QR code to open the employee record or PDF.</p>
+        </div>
+
+        <a href="/" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            Dashboard
+        </a>
+    </div>
+
+    <div class="scanner-grid">
+
+        <section class="scanner-panel">
+
+            <div class="camera-shell">
+                <video id="scannerVideo" autoplay muted playsinline></video>
+
+                <div class="camera-placeholder" id="cameraPlaceholder">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <h4>Camera scanner ready</h4>
+                    <p>Press Start Scanner and allow camera permission.</p>
+                </div>
+
+                <div class="scan-frame">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <div class="scan-line"></div>
+                </div>
+            </div>
+
+            <div class="scanner-actions">
+                <button type="button" class="scanner-btn primary" id="startScanner">
+                    <i class="fa-solid fa-camera"></i>
+                    Start Scanner
+                </button>
+
+                <button type="button" class="scanner-btn" id="stopScanner" disabled>
+                    <i class="fa-solid fa-stop"></i>
+                    Stop
+                </button>
+
+                <button type="button" class="scanner-btn" id="toggleTorch" disabled>
+                    <i class="fa-solid fa-bolt"></i>
+                    Torch
+                </button>
+            </div>
+
+            <div class="scanner-status" id="scannerStatus">
+                Waiting for scanner to start.
+            </div>
+
+        </section>
+
+        <aside class="scanner-side">
+
+            <div class="side-card">
+                <div class="side-card-title">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Scan Result
+                </div>
+
+                <div class="scan-result empty" id="scanResult">
+                    No QR code scanned yet.
+                </div>
+
+                <div class="result-actions" id="resultActions">
+                    <button type="button" class="open-result-btn" id="openResult" disabled>
+                        <i class="fa-solid fa-up-right-from-square"></i>
+                        Open Result
+                    </button>
+                </div>
+            </div>
+
+            <div class="side-card">
+                <div class="side-card-title">
+                    <i class="fa-solid fa-image"></i>
+                    Scan From Image
+                </div>
+
+                <label class="file-drop">
+                    <input type="file" id="qrImageInput" accept="image/*">
+                    <i class="fa-solid fa-upload"></i>
+                    Upload QR image
+                </label>
+            </div>
+
+            <div class="side-card">
+                <div class="side-card-title">
+                    <i class="fa-solid fa-keyboard"></i>
+                    Manual Entry
+                </div>
+
+                <div class="manual-box">
+                    <input type="text" id="manualValue" placeholder="Paste QR link or employee code">
+                    <button type="button" id="manualSubmit">
+                        Go
+                    </button>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+<canvas id="scannerCanvas" hidden></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+<script>
+const video = document.getElementById("scannerVideo");
+const canvas = document.getElementById("scannerCanvas");
+const startButton = document.getElementById("startScanner");
+const stopButton = document.getElementById("stopScanner");
+const torchButton = document.getElementById("toggleTorch");
+const statusBox = document.getElementById("scannerStatus");
+const resultBox = document.getElementById("scanResult");
+const openResultButton = document.getElementById("openResult");
+const imageInput = document.getElementById("qrImageInput");
+const manualInput = document.getElementById("manualValue");
+const manualSubmit = document.getElementById("manualSubmit");
+const cameraPlaceholder = document.getElementById("cameraPlaceholder");
+
+let scannerStream = null;
+let scannerTrack = null;
+let scannerDetector = null;
+let scanTimer = null;
+let lastResult = "";
+let torchEnabled = false;
+let serverScanBusy = false;
+
+function setStatus(message, type) {
+    statusBox.textContent = message;
+    statusBox.dataset.type = type || "info";
+}
+
+function showResult(value) {
+    lastResult = value;
+    resultBox.classList.remove("empty");
+    resultBox.textContent = value;
+    openResultButton.disabled = false;
+    setStatus("QR code detected successfully.", "success");
+}
+
+function normalizeResult(value) {
+    const text = value.trim();
+
+    if (!text) {
+        return "";
+    }
+
+    if (/^https?:\/\//i.test(text)) {
+        const scannedUrl = new URL(text);
+        return scannedUrl.pathname + scannedUrl.search + scannedUrl.hash;
+    }
+
+    if (text.startsWith("/")) {
+        return text;
+    }
+
+    return `/employees/code/${encodeURIComponent(text)}/`;
+}
+
+function openScannedResult() {
+    const target = normalizeResult(lastResult);
+
+    if (!target) {
+        setStatus("No scan result available.", "error");
+        return;
+    }
+
+    window.location.href = target;
+}
+
+function getCsrfToken() {
+    const cookie = document.cookie
+        .split(";")
+        .map((item) => item.trim())
+        .find((item) => item.startsWith("csrftoken="));
+
+    return cookie ? decodeURIComponent(cookie.split("=")[1]) : "{{ csrf_token }}";
+}
+
+async function createDetector() {
+    if ("BarcodeDetector" in window) {
+        return new BarcodeDetector({
+            formats: ["qr_code"],
+        });
+    }
+
+    return null;
+}
+
+function detectWithCanvas(source) {
+    if (!window.jsQR) {
+        return "";
+    }
+
+    const context = canvas.getContext("2d", {
+        willReadFrequently: true,
+    });
+    const width = source.videoWidth || source.width;
+    const height = source.videoHeight || source.height;
+
+    if (!width || !height) {
+        return "";
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(source, 0, 0, width, height);
+
+    const imageData = context.getImageData(0, 0, width, height);
+    const code = jsQR(imageData.data, width, height, {
+        inversionAttempts: "dontInvert",
+    });
+
+    return code && code.data ? code.data : "";
+}
+
+function drawSourceToCanvas(source) {
+    const context = canvas.getContext("2d", {
+        willReadFrequently: true,
+    });
+    const width = source.videoWidth || source.width;
+    const height = source.videoHeight || source.height;
+
+    if (!width || !height) {
+        return false;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(source, 0, 0, width, height);
+
+    return true;
+}
+
+async function decodeImageOnServer(file) {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch("{% url 'decode_qr_code' %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": getCsrfToken(),
+        },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error || "No QR code found");
+    }
+
+    return data.value || "";
+}
+
+async function decodeCanvasOnServer() {
+    if (serverScanBusy || !drawSourceToCanvas(video)) {
+        return "";
+    }
+
+    serverScanBusy = true;
+
+    try {
+        const image = canvas.toDataURL("image/png");
+        const formData = new FormData();
+        formData.append("image", image);
+
+        const response = await fetch("{% url 'decode_qr_code' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": getCsrfToken(),
+            },
+        });
+
+        const data = await response.json();
+
+        return response.ok ? data.value || "" : "";
+    } finally {
+        serverScanBusy = false;
+    }
+}
+
+async function scanFrame() {
+    if (!scannerStream || video.readyState < 2) {
+        return;
+    }
+
+    try {
+        let value = "";
+
+        if (scannerDetector) {
+            const codes = await scannerDetector.detect(video);
+            value = codes.length && codes[0].rawValue ? codes[0].rawValue : "";
+        } else {
+            value = detectWithCanvas(video);
+        }
+
+        if (!value) {
+            value = await decodeCanvasOnServer();
+        }
+
+        if (value) {
+            showResult(value);
+            stopScanner();
+        }
+    } catch (error) {
+        setStatus(error.message || "Unable to scan this frame.", "error");
+    }
+}
+
+async function startScanner() {
+    try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error("Camera access needs localhost or HTTPS. Open this page on localhost, or run the server with HTTPS for phone scanning.");
+        }
+
+        scannerDetector = await createDetector();
+
+        scannerStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: "environment",
+            },
+            audio: false,
+        });
+
+        video.srcObject = scannerStream;
+        scannerTrack = scannerStream.getVideoTracks()[0];
+        cameraPlaceholder.hidden = true;
+        startButton.disabled = true;
+        stopButton.disabled = false;
+
+        const capabilities = scannerTrack.getCapabilities ? scannerTrack.getCapabilities() : {};
+        torchButton.disabled = !capabilities.torch;
+
+        setStatus("Scanning. Place the QR code inside the frame.", "success");
+        scanTimer = setInterval(scanFrame, 450);
+    } catch (error) {
+        setStatus(error.message || "Camera could not be started.", "error");
+    }
+}
+
+function stopScanner() {
+    if (scanTimer) {
+        clearInterval(scanTimer);
+        scanTimer = null;
+    }
+
+    if (scannerStream) {
+        scannerStream.getTracks().forEach((track) => track.stop());
+    }
+
+    scannerStream = null;
+    scannerTrack = null;
+    torchEnabled = false;
+    video.srcObject = null;
+    cameraPlaceholder.hidden = false;
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    torchButton.disabled = true;
+}
+
+async function toggleTorch() {
+    if (!scannerTrack) {
+        return;
+    }
+
+    try {
+        torchEnabled = !torchEnabled;
+        await scannerTrack.applyConstraints({
+            advanced: [{ torch: torchEnabled }],
+        });
+        setStatus(torchEnabled ? "Torch enabled." : "Torch disabled.", "success");
+    } catch (error) {
+        setStatus("Torch is not available on this camera.", "error");
+    }
+}
+
+async function scanImage(file) {
+    try {
+        const detector = await createDetector();
+        const image = await createImageBitmap(file);
+        let value = "";
+
+        if (detector) {
+            const codes = await detector.detect(image);
+            value = codes.length && codes[0].rawValue ? codes[0].rawValue : "";
+        } else {
+            value = detectWithCanvas(image);
+        }
+
+        if (value) {
+            showResult(value);
+        } else {
+            value = await decodeImageOnServer(file);
+            showResult(value);
+        }
+    } catch (error) {
+        setStatus(error.message || "Could not scan the uploaded image.", "error");
+    }
+}
+
+startButton.addEventListener("click", startScanner);
+stopButton.addEventListener("click", stopScanner);
+torchButton.addEventListener("click", toggleTorch);
+openResultButton.addEventListener("click", openScannedResult);
+
+imageInput.addEventListener("change", function () {
+    if (this.files && this.files[0]) {
+        scanImage(this.files[0]);
+    }
+});
+
+manualSubmit.addEventListener("click", function () {
+    if (manualInput.value.trim()) {
+        showResult(manualInput.value.trim());
+        openScannedResult();
+    }
+});
+
+window.addEventListener("beforeunload", stopScanner);
+</script>
+
+<style>
+.scanner-page{
+    padding:10px;
+}
+
+.scanner-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.scanner-header h2{
+    font-size:30px;
+    font-weight:700;
+    margin-bottom:4px;
+    color:#0f172a;
+}
+
+.scanner-header p{
+    color:#64748b;
+    margin:0;
+}
+
+.back-link{
+    background:#0f172a;
+    color:white;
+    padding:11px 18px;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.back-link:hover{
+    color:white;
+}
+
+.scanner-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 1.8fr) minmax(320px, 0.9fr);
+    gap:22px;
+}
+
+.scanner-panel,
+.side-card{
+    background:white;
+    border-radius:18px;
+    box-shadow:0 2px 10px rgba(15,23,42,0.06);
+}
+
+.scanner-panel{
+    padding:22px;
+}
+
+.camera-shell{
+    position:relative;
+    min-height:520px;
+    background:#020617;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+#scannerVideo{
+    width:100%;
+    height:520px;
+    object-fit:cover;
+    display:block;
+}
+
+.camera-placeholder{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    text-align:center;
+    background:linear-gradient(145deg,#0f172a,#111827);
+    padding:24px;
+}
+
+.camera-placeholder i{
+    font-size:58px;
+    color:#22c55e;
+    margin-bottom:16px;
+}
+
+.camera-placeholder h4{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.camera-placeholder p{
+    color:#cbd5e1;
+    margin:0;
+}
+
+.scan-frame{
+    position:absolute;
+    width:300px;
+    height:300px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -50%);
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:24px;
+    pointer-events:none;
+}
+
+.scan-frame span{
+    position:absolute;
+    width:46px;
+    height:46px;
+    border-color:#22c55e;
+}
+
+.scan-frame span:nth-child(1){
+    left:-2px;
+    top:-2px;
+    border-left:5px solid #22c55e;
+    border-top:5px solid #22c55e;
+    border-top-left-radius:24px;
+}
+
+.scan-frame span:nth-child(2){
+    right:-2px;
+    top:-2px;
+    border-right:5px solid #22c55e;
+    border-top:5px solid #22c55e;
+    border-top-right-radius:24px;
+}
+
+.scan-frame span:nth-child(3){
+    right:-2px;
+    bottom:-2px;
+    border-right:5px solid #22c55e;
+    border-bottom:5px solid #22c55e;
+    border-bottom-right-radius:24px;
+}
+
+.scan-frame span:nth-child(4){
+    left:-2px;
+    bottom:-2px;
+    border-left:5px solid #22c55e;
+    border-bottom:5px solid #22c55e;
+    border-bottom-left-radius:24px;
+}
+
+.scan-line{
+    position:absolute;
+    left:18px;
+    right:18px;
+    top:34px;
+    height:3px;
+    border-radius:999px;
+    background:#22c55e;
+    box-shadow:0 0 18px rgba(34,197,94,0.85);
+    animation:scanLine 2.4s ease-in-out infinite;
+}
+
+@keyframes scanLine{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(228px);
+    }
+}
+
+.scanner-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+.scanner-btn,
+.open-result-btn,
+.manual-box button{
+    border:none;
+    border-radius:12px;
+    padding:12px 16px;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    background:#f1f5f9;
+    color:#0f172a;
+}
+
+.scanner-btn.primary,
+.open-result-btn,
+.manual-box button{
+    background:#16a34a;
+    color:white;
+}
+
+.scanner-btn:disabled,
+.open-result-btn:disabled{
+    opacity:0.55;
+    cursor:not-allowed;
+}
+
+.scanner-status{
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:12px;
+    background:#f8fafc;
+    color:#475569;
+    font-size:14px;
+}
+
+.scanner-status[data-type="success"]{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.scanner-status[data-type="error"]{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.scanner-side{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.side-card{
+    padding:20px;
+}
+
+.side-card-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:700;
+    color:#0f172a;
+    margin-bottom:14px;
+}
+
+.side-card-title i{
+    color:#16a34a;
+}
+
+.scan-result{
+    min-height:96px;
+    padding:14px;
+    border-radius:12px;
+    background:#f8fafc;
+    color:#0f172a;
+    overflow-wrap:anywhere;
+    line-height:1.5;
+}
+
+.scan-result.empty{
+    color:#64748b;
+}
+
+.result-actions{
+    margin-top:14px;
+}
+
+.open-result-btn{
+    width:100%;
+}
+
+.file-drop{
+    border:1px dashed #94a3b8;
+    border-radius:14px;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    color:#475569;
+    cursor:pointer;
+    background:#f8fafc;
+}
+
+.file-drop input{
+    display:none;
+}
+
+.file-drop i{
+    font-size:26px;
+    color:#16a34a;
+}
+
+.manual-box{
+    display:flex;
+    gap:10px;
+}
+
+.manual-box input{
+    flex:1;
+    min-width:0;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px 14px;
+    outline:none;
+}
+
+.manual-box input:focus{
+    border-color:#16a34a;
+}
+
+@media(max-width:1100px){
+    .scanner-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:600px){
+    .scanner-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+    .camera-shell,
+    #scannerVideo{
+        min-height:390px;
+        height:390px;
+    }
+
+    .scan-frame{
+        width:240px;
+        height:240px;
+    }
+
+    @keyframes scanLine{
+        0%,100%{
+            transform:translateY(0);
+        }
+        50%{
+            transform:translateY(168px);
+        }
+    }
+}
+</style>
+
+{% endblock %}

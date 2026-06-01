@@ -1,0 +1,542 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="reports-page">
+
+    <div class="reports-header">
+
+        <div>
+            <h2>Reports</h2>
+            <p>Employee register insights and filtered exports</p>
+        </div>
+
+        <div class="report-actions">
+            <a href="{% url 'export_excel' %}?{{ request.GET.urlencode }}" class="primary-action">
+                <i class="fa-solid fa-file-excel"></i>
+                Export Excel
+            </a>
+        </div>
+
+    </div>
+
+    <div class="filter-panel">
+
+        <form method="GET" class="report-filter-form">
+
+            <div class="filter-field">
+                <label>Start Date</label>
+                <input type="date" name="start_date" value="{{ request.GET.start_date }}">
+            </div>
+
+            <div class="filter-field">
+                <label>End Date</label>
+                <input type="date" name="end_date" value="{{ request.GET.end_date|default:today }}">
+            </div>
+
+            <div class="filter-field">
+                <label>Department</label>
+                <select name="department">
+                    <option value="">All Departments</option>
+                    {% for department in departments %}
+                        <option value="{{ department }}" {% if selected_department == department %}selected{% endif %}>
+                            {{ department }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-buttons">
+                <button type="submit" class="filter-btn">
+                    <i class="fa-solid fa-filter"></i>
+                    Apply
+                </button>
+
+                <a href="{% url 'reports' %}" class="clear-btn">
+                    Clear
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="report-stats">
+
+        <div class="report-stat-card">
+            <div>
+                <p>Total Employees</p>
+                <h3>{{ total_employees }}</h3>
+            </div>
+            <span class="report-icon blue">
+                <i class="fa-solid fa-users"></i>
+            </span>
+        </div>
+
+        <div class="report-stat-card">
+            <div>
+                <p>Total Documents</p>
+                <h3>{{ documents_count }}</h3>
+            </div>
+            <span class="report-icon green">
+                <i class="fa-solid fa-file-lines"></i>
+            </span>
+        </div>
+
+        <div class="report-stat-card">
+            <div>
+                <p>QR Generated</p>
+                <h3>{{ qr_generated_count }}</h3>
+            </div>
+            <span class="report-icon violet">
+                <i class="fa-solid fa-qrcode"></i>
+            </span>
+        </div>
+
+        <div class="report-stat-card">
+            <div>
+                <p>Missing Documents</p>
+                <h3>{{ missing_documents_count }}</h3>
+            </div>
+            <span class="report-icon amber">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </span>
+        </div>
+
+    </div>
+
+    <div class="report-grid">
+
+        <div class="report-card wide">
+
+            <div class="section-title">
+                <h4>Department Summary</h4>
+                <span>{{ total_employees }} employees</span>
+            </div>
+
+            <div class="summary-table-wrap">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Employees</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in department_breakdown %}
+                        <tr>
+                            <td>{{ item.department|default:"Not specified" }}</td>
+                            <td>{{ item.total }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="empty-state">No records found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="report-card">
+
+            <div class="section-title">
+                <h4>Category Mix</h4>
+            </div>
+
+            <div class="breakdown-list">
+                {% for item in category_breakdown %}
+                <div class="breakdown-row">
+                    <span>{{ item.category }}</span>
+                    <strong>{{ item.total }}</strong>
+                </div>
+                {% empty %}
+                <div class="empty-state">No category data</div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <div class="report-card">
+
+            <div class="section-title">
+                <h4>Employment Type</h4>
+            </div>
+
+            <div class="breakdown-list">
+                {% for item in employment_breakdown %}
+                <div class="breakdown-row">
+                    <span>{{ item.employment_type }}</span>
+                    <strong>{{ item.total }}</strong>
+                </div>
+                {% empty %}
+                <div class="empty-state">No employment data</div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="report-card recent-card">
+
+        <div class="section-title">
+            <h4>Recent Records In This Report</h4>
+            <a href="{% url 'employee_list' %}">Open Employee List</a>
+        </div>
+
+        <div class="recent-table-wrap">
+            <table class="recent-table">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Joining Date</th>
+                        <th>Documents</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td><span class="id-pill">{{ employee.employee_id }}</span></td>
+                        <td>{{ employee.name }}</td>
+                        <td>{{ employee.department }}</td>
+                        <td>{{ employee.designation }}</td>
+                        <td>{{ employee.joining_date }}</td>
+                        <td>{{ employee.documents.count }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-state">No employees match this report filter</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+.reports-page{
+    padding:10px;
+}
+
+.reports-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    margin-bottom:18px;
+}
+
+.reports-header h2{
+    font-size:30px;
+    font-weight:700;
+    color:#0f172a;
+    margin:0 0 4px;
+}
+
+.reports-header p{
+    color:#64748b;
+    margin:0;
+}
+
+.report-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.primary-action{
+    background:#15803d;
+    color:white;
+    text-decoration:none;
+    border-radius:12px;
+    padding:11px 18px;
+    font-size:14px;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+}
+
+.primary-action:hover{
+    background:#166534;
+    color:white;
+}
+
+.filter-panel,
+.report-card,
+.report-stat-card{
+    background:white;
+    box-shadow:0 2px 10px rgba(15,23,42,0.06);
+}
+
+.filter-panel{
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:18px;
+}
+
+.report-filter-form{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(180px,1fr)) auto;
+    gap:16px;
+    align-items:end;
+}
+
+.filter-field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.filter-field label{
+    font-size:13px;
+    color:#475569;
+    font-weight:600;
+}
+
+.filter-field input,
+.filter-field select{
+    border:1px solid #cbd5e1;
+    background:#f8fafc;
+    border-radius:10px;
+    min-height:44px;
+    padding:10px 12px;
+    outline:none;
+    color:#0f172a;
+}
+
+.filter-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.filter-btn,
+.clear-btn{
+    min-height:44px;
+    border-radius:10px;
+    padding:0 16px;
+    font-size:14px;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+.filter-btn{
+    border:none;
+    background:#0f172a;
+    color:white;
+}
+
+.clear-btn{
+    border:1px solid #cbd5e1;
+    color:#334155;
+    text-decoration:none;
+    background:white;
+}
+
+.report-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:18px;
+}
+
+.report-stat-card{
+    border-radius:18px;
+    padding:20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.report-stat-card p{
+    margin:0;
+    color:#64748b;
+    font-size:14px;
+}
+
+.report-stat-card h3{
+    margin:8px 0 0;
+    color:#0f172a;
+    font-size:28px;
+    font-weight:700;
+}
+
+.report-icon{
+    width:52px;
+    height:52px;
+    border-radius:14px;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+.blue{background:#2563eb;}
+.green{background:#16a34a;}
+.violet{background:#7c3aed;}
+.amber{background:#d97706;}
+
+.report-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:18px;
+    margin-bottom:18px;
+}
+
+.report-card{
+    border-radius:18px;
+    padding:20px;
+}
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+}
+
+.section-title h4{
+    margin:0;
+    color:#0f172a;
+    font-size:18px;
+    font-weight:700;
+}
+
+.section-title span,
+.section-title a{
+    color:#2563eb;
+    font-size:13px;
+    font-weight:600;
+    text-decoration:none;
+}
+
+.summary-table,
+.recent-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.summary-table th,
+.summary-table td,
+.recent-table th,
+.recent-table td{
+    padding:13px 14px;
+    border-bottom:1px solid #e2e8f0;
+    font-size:14px;
+}
+
+.summary-table th,
+.recent-table th{
+    background:#f8fafc;
+    color:#475569;
+    font-weight:700;
+}
+
+.summary-table td,
+.recent-table td{
+    color:#334155;
+}
+
+.breakdown-list{
+    display:flex;
+    flex-direction:column;
+    gap:11px;
+}
+
+.breakdown-row{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px 13px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.breakdown-row span{
+    color:#334155;
+    font-size:14px;
+}
+
+.breakdown-row strong{
+    color:#0f172a;
+}
+
+.recent-card{
+    overflow:hidden;
+}
+
+.recent-table-wrap,
+.summary-table-wrap{
+    overflow-x:auto;
+}
+
+.id-pill{
+    background:#eff6ff;
+    color:#1d4ed8;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.empty-state{
+    color:#94a3b8;
+    text-align:center;
+    padding:18px;
+}
+
+@media(max-width:1100px){
+    .report-filter-form,
+    .report-stats,
+    .report-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .report-grid .wide{
+        grid-column:1 / -1;
+    }
+}
+
+@media(max-width:700px){
+    .reports-header,
+    .section-title{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .report-filter-form,
+    .report-stats,
+    .report-grid{
+        grid-template-columns:1fr;
+    }
+
+    .filter-buttons{
+        width:100%;
+    }
+
+    .filter-btn,
+    .clear-btn,
+    .primary-action{
+        width:100%;
+    }
+}
+
+</style>
+
+{% endblock %}

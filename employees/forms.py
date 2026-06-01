@@ -5,7 +5,9 @@ from .models import Employee
 class EmployeeForm(forms.ModelForm):
 
     class Meta:
+
         model = Employee
+
         fields = '__all__'
 
         widgets = {
@@ -24,9 +26,7 @@ class EmployeeForm(forms.ModelForm):
                 attrs={'type': 'date'}
             ),
 
-            'first_appointment_date': forms.DateInput(
-                attrs={'type': 'date'}
-            ),
+            
 
             'vocational_training_date': forms.DateInput(
                 attrs={'type': 'date'}
@@ -61,27 +61,47 @@ class EmployeeForm(forms.ModelForm):
             'emergency_contact_address': forms.Textarea(
                 attrs={'rows': 3}
             ),
+
         }
 
     def __init__(self, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
 
-        # PROFESSIONAL DROPDOWN DEFAULTS
+        # ONLY THESE FIELDS REQUIRED
+
+        required_fields = [
+
+            'employee_id',
+            'name',
+            'department',
+            'designation',
+            'mobile',
+            'joining_date'
+
+        ]
+
+        # MAKE OTHER FIELDS OPTIONAL
+
+        for field_name, field in self.fields.items():
+
+            if field_name not in required_fields:
+
+                field.required = False
+
+        # DROPDOWN DEFAULTS
 
         self.fields['gender'].choices = [
-            ('', 'Select one     ')
+            ('', 'Select Gender  ▼')
         ] + list(Employee.GENDER_CHOICES)
 
         self.fields['category'].choices = [
-            ('', 'Select one     ')
+            ('', 'Select Category  ▼')
         ] + list(Employee.CATEGORY_CHOICES)
 
-        self.fields['place_of_employment'].choices = [
-            ('', 'Select one     ')
-        ] + list(Employee.PLACE_CHOICES)
+       
 
-        # PLACEHOLDER
+        # STYLING
 
         for field_name, field in self.fields.items():
 

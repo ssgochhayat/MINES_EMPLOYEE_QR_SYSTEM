@@ -1,53 +1,237 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login - Mine QR System</title>
+    <title>Login - GVPR Employee Management System</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
 
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
         body{
-            background:#0f172a;
-            height:100vh;
+            font-family:'Poppins',sans-serif;
+            min-height:100vh;
             display:flex;
             justify-content:center;
             align-items:center;
-            font-family:Poppins,sans-serif;
+            background:
+                linear-gradient(rgba(15,23,42,0.88), rgba(15,23,42,0.88)),
+                url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+            padding:20px;
+            overflow:hidden;
+            position:relative;
+        }
+
+        /* Background Glow */
+        body::before{
+            content:'';
+            position:absolute;
+            width:450px;
+            height:450px;
+            background:#3b82f6;
+            border-radius:50%;
+            filter:blur(120px);
+            opacity:0.25;
+            top:-120px;
+            left:-120px;
+        }
+
+        body::after{
+            content:'';
+            position:absolute;
+            width:400px;
+            height:400px;
+            background:#06b6d4;
+            border-radius:50%;
+            filter:blur(120px);
+            opacity:0.20;
+            bottom:-120px;
+            right:-120px;
+        }
+
+        .login-wrapper{
+            width:100%;
+            max-width:430px;
+            position:relative;
+            z-index:10;
         }
 
         .login-box{
-            width:400px;
-            background:white;
-            padding:40px;
-            border-radius:20px;
-            box-shadow:0 10px 30px rgba(0,0,0,0.2);
+            background:rgba(255,255,255,0.12);
+            backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px);
+            border:1px solid rgba(255,255,255,0.15);
+            border-radius:28px;
+            padding:45px 35px;
+            box-shadow:0 20px 60px rgba(0,0,0,0.35);
+            animation:fadeIn 0.7s ease;
+        }
+
+        @keyframes fadeIn{
+            from{
+                opacity:0;
+                transform:translateY(30px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .logo-box{
+            width:80px;
+            height:80px;
+            margin:0 auto 20px;
+            background:linear-gradient(135deg,#ffffff,#f0f0f0);
+            border-radius:22px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:white;
+            font-size:28px;
+            font-weight:700;
+            box-shadow:0 10px 25px rgba(37,99,235,0.4);
         }
 
         .title{
             text-align:center;
-            margin-bottom:30px;
+            margin-bottom:35px;
         }
 
         .title h2{
+            font-size:30px;
             font-weight:700;
-            color:#0f172a;
+            color:white;
+            margin-bottom:10px;
+            line-height:1.3;
+        }
+
+        .title p{
+            color:rgba(255,255,255,0.75);
+            font-size:14px;
+            margin:0;
+        }
+
+        .form-label{
+            color:white;
+            font-weight:500;
+            margin-bottom:8px;
+        }
+
+        .input-group{
+            border-radius:16px;
+            overflow:hidden;
+            background:rgba(255,255,255,0.10);
+            border:1px solid rgba(255,255,255,0.15);
+            transition:0.3s;
+        }
+
+        .input-group:focus-within{
+            border-color:#60a5fa;
+            box-shadow:0 0 0 4px rgba(96,165,250,0.18);
+            transform:translateY(-1px);
+        }
+
+        .input-group-text{
+            background:transparent;
+            border:none;
+            color:#cbd5e1;
+            padding-left:18px;
+            padding-right:18px;
+            font-size:18px;
+        }
+
+        .form-control{
+            height:55px;
+            background:transparent;
+            border:none;
+            color:white;
+            font-size:15px;
+            box-shadow:none !important;
+        }
+
+        .form-control::placeholder{
+            color:rgba(255,255,255,0.60);
+        }
+
+        .alert{
+            border-radius:14px;
+            border:none;
+            font-size:14px;
+            margin-bottom:22px;
         }
 
         .btn-login{
             width:100%;
-            background:#0f172a;
-            color:white;
-            padding:12px;
+            height:55px;
             border:none;
-            border-radius:12px;
+            border-radius:16px;
+            background:linear-gradient(135deg,#2563eb,#06b6d4);
+            color:white;
+            font-size:16px;
             font-weight:600;
+            letter-spacing:0.3px;
+            transition:0.3s ease;
+            box-shadow:0 12px 25px rgba(37,99,235,0.35);
         }
 
-        .form-control{
-            height:50px;
-            border-radius:12px;
+        .btn-login:hover{
+            transform:translateY(-2px);
+            box-shadow:0 16px 30px rgba(37,99,235,0.45);
+        }
+
+        .btn-login:active{
+            transform:scale(0.98);
+        }
+
+        .footer-text{
+            text-align:center;
+            margin-top:22px;
+            color:rgba(255,255,255,0.65);
+            font-size:13px;
+        }
+
+        /* Eye Button */
+        .eye-btn{
+            cursor:pointer;
+            user-select:none;
+            transition:0.3s;
+        }
+
+        .eye-btn:hover{
+            color:#60a5fa;
+        }
+
+        @media(max-width:480px){
+
+            .login-box{
+                padding:35px 25px;
+                border-radius:24px;
+            
+            }
+
+            .title h2{
+                font-size:24px;
+            }
+            .logo-box img{
+                width:55px;
+                height:55px;
+                object-fit:contain;
+            }
+
         }
 
     </style>
@@ -56,59 +240,103 @@
 
 <body>
 
-<div class="login-box">
+    <div class="login-wrapper">
 
-    <div class="title">
+        <div class="login-box">
 
-        <h2>Mine QR System</h2>
+            <div class="logo-box">
+                <img src="/media/Company logo/logo.png" alt="GVPR" WIDTH="50" HEIGHT="40"> 
+            </div>
 
-        <p>Admin Login</p>
+            <div class="title">
+                <h2>GVPR Employee Management System</h2>
+                <p>Secure login portal for employees</p>
+            </div>
 
-    </div>
+            {% if error %}
 
-    {% if error %}
+            <div class="alert alert-danger text-center">
+                {{ error }}
+            </div>
 
-    <div class="alert alert-danger">
-        {{ error }}
-    </div>
+            {% endif %}
 
-    {% endif %}
+            <form method="POST">
 
-    <form method="POST">
+                {% csrf_token %}
 
-        {% csrf_token %}
+                <div class="mb-4">
+                    <label class="form-label">Username</label>
 
-        <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text">👤</span>
 
-            <input
-                type="text"
-                name="username"
-                class="form-control"
-                placeholder="Username"
-                required
-            >
+                        <input
+                            type="text"
+                            name="username"
+                            class="form-control"
+                            placeholder="Enter your username"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Password</label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">🔒</span>
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            class="form-control"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <!-- Eye Button -->
+                        <span
+                            class="input-group-text eye-btn"
+                            onclick="togglePassword()"
+                        >
+                            👁️
+                        </span>
+
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Login to Dashboard
+                </button>
+
+            </form>
+
+            <div class="footer-text">
+                © 2026 GVPR Employee Management System
+            </div>
 
         </div>
 
-        <div class="mb-3">
+    </div>
 
-            <input
-                type="password"
-                name="password"
-                class="form-control"
-                placeholder="Password"
-                required
-            >
+    <script>
 
-        </div>
+        function togglePassword() {
 
-        <button type="submit" class="btn-login">
-            Login
-        </button>
+            const passwordInput = document.getElementById("password");
 
-    </form>
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+            }
 
-</div>
+        }
+
+    </script>
 
 </body>
 </html>

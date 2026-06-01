@@ -1,0 +1,112 @@
+.main-header,
+.main-sidebar{
+    font-family: "Poppins", "Source Sans Pro", Arial, sans-serif;
+}
+
+.brand-link{
+    min-height:64px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+}
+
+.brand-link .brand-image,
+.gvpr-admin-logo{
+    width:42px !important;
+    height:42px !important;
+    max-height:42px !important;
+    object-fit:contain;
+    background:#ffffff;
+    border-radius:10px;
+    padding:5px;
+    box-shadow:0 8px 20px rgba(15,23,42,0.14);
+}
+
+.brand-link .brand-text{
+    font-weight:700;
+    letter-spacing:0;
+}
+
+.main-sidebar{
+    background:#0f172a;
+}
+
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active{
+    background:#2563eb;
+    color:#ffffff;
+    box-shadow:none;
+}
+
+.nav-sidebar .nav-link{
+    border-radius:10px;
+    margin:3px 8px;
+}
+
+.content-wrapper{
+    background:#f1f5f9;
+}
+
+.card,
+.module{
+    border:none;
+    border-radius:12px;
+    box-shadow:0 2px 12px rgba(15,23,42,0.06);
+}
+
+.card-header{
+    border-bottom:1px solid #e2e8f0;
+}
+
+.btn,
+.button,
+input[type=submit],
+input[type=button],
+.object-tools a,
+.admin-main-link{
+    border-radius:9px !important;
+    font-weight:600;
+}
+
+.admin-main-link{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:8px 12px;
+    background:#0f172a;
+    color:#ffffff !important;
+    text-decoration:none !important;
+}
+
+.admin-main-link:hover{
+    background:#1e293b;
+    color:#ffffff !important;
+}
+
+.field-photo_preview_large img,
+.field-signature_preview img,
+.field-qr_preview_large img{
+    background:#ffffff;
+    border:1px solid #e2e8f0 !important;
+    border-radius:12px;
+    padding:8px;
+}
+
+table thead th{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0;
+}
+
+@media(max-width:767px){
+    .brand-link{
+        min-height:56px;
+    }
+
+    .brand-link .brand-image,
+    .gvpr-admin-logo{
+        width:36px !important;
+        height:36px !important;
+        max-height:36px !important;
+    }
+}
